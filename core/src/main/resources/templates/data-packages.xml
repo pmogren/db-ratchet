@@ -1,0 +1,25 @@
+<data-packages>
+<!--
+	This config file defines the data packages that can be migrated to and
+	from this database. A package is a set of one or more tables that are 
+	always migrated in full every time they are moved. There are 2 ways to
+	define a data package:
+		
+		1. For a single table package:
+		
+			<package name="mypackage" table="MyTable" />
+			
+			Where name is optional and will be defaulted to the name of the
+			table if it is not present.
+		
+		2. For multiple table package:
+		
+			<package name="mypackage">
+				<table>MyTable</table>
+				<table>MyOtherTable</table>
+			</package>
+			
+			Where name is required and one or more table elements are present.
+-->
+	
+</data-packages>

@@ -1,0 +1,39 @@
+apply from: file("gradle/convention.gradle")
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "net.saliman:gradle-cobertura-plugin:2.1.0"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3"
+        classpath "com.github.townsfolk:gradle-release:1.2"
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    group = "com.commercehub.dbratchet"
+}
+
+cobertura {
+    coverageIgnoreTrivial true
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.9'
+}
+
+idea {
+    project {
+        languageLevel = "1.6"
+    }
+}
+
+

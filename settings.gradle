@@ -1,0 +1,8 @@
+rootProject.name = "dbratchet"
+
+include "core"
+include "cmdline"
+
+rootProject.children.each { childProject ->
+    childProject.name = "${rootProject.name}-${childProject.name}"
+}

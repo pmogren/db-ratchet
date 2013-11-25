@@ -1,0 +1,57 @@
+apply plugin: "release"
+
+allprojects {
+	apply plugin: 'groovy'
+	apply plugin: 'cobertura'
+	apply plugin: 'codenarc'
+    apply plugin: "idea"
+
+    dependencies {
+        compile 'org.codehaus.groovy:groovy-all:2.1.7'
+        compile 'com.google.guava:guava:15.0'
+    }
+}
+
+subprojects { project ->
+    apply plugin: "maven-publish"
+    apply plugin: "groovy"
+    sourceCompatibility = 1.6
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        from sourceSets.main.allSource
+        classifier "sources"
+        extension "jar"
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        from javadoc.destinationDir
+        classifier "javadoc"
+        extension "jar"
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+            }
+        }
+    }
+
+    apply plugin: "bintray"
+
+    bintray {
+        user = project.hasProperty("bintrayUserName") ? bintrayUserName : null
+        key = project.hasProperty("bintrayApiKey") ? bintrayApiKey : null
+        publications = ["mavenJava"]
+        pkg {
+            repo = "main"
+            userOrg = "commercehub-oss"
+            name = project.rootProject.name
+            licenses = ["Apache-2.0"]
+        }
+    }
+    bintrayUpload.dependsOn build, sourcesJar, javadocJar
+    createReleaseTag.dependsOn bintrayUpload
+}

@@ -1,0 +1,102 @@
+package com.commercehub.dbratchet.schema.redgate
+
+import com.commercehub.dbratchet.DatabaseConfig
+import com.commercehub.dbratchet.schema.SchemaConfig
+import com.commercehub.dbratchet.schema.SchemaDifferenceEngine
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: jgelais
+ * Date: 11/16/13
+ * Time: 12:04 PM
+ */
+class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
+    public static final String SCHEMA_DIR = 'redgate-schema'
+    public static final String CONFIG_DIR = 'redgate-config'
+    public static final String FILTER_FILE_NAME = 'filter.scpf'
+    public static final String ENGINE_NAME = 'redgate'
+    private static final String REDGATE_DATABASE_INFO_FILE_NAME = 'RedGateDatabaseInfo.xml'
+
+    SchemaConfig schemaConfig
+    SqlCompare sqlCompare
+
+    final String name = ENGINE_NAME
+    final File fileStoreDir
+
+    private final File configDir
+    private final File filterFile
+
+    SqlCompareSchemaDifferenceEngine(SchemaConfig config) {
+        sqlCompare = new SqlCompareFactory().newSqlCompare()
+        schemaConfig = config
+        fileStoreDir = new File(schemaConfig.rootDir, SCHEMA_DIR)
+        configDir = new File(schemaConfig.rootDir, CONFIG_DIR)
+        filterFile = new File(configDir, FILTER_FILE_NAME)
+
+        if (filterFile.exists()) {
+            sqlCompare.setFilter(filterFile.absolutePath)
+        }
+    }
+
+    void setTargetDatabase(DatabaseConfig dbConfig) {
+        sqlCompare.targetDatabaseConfig = dbConfig
+        if (sqlCompare.isDoMakeScripts()) {
+            sqlCompare.setDoMakeScripts(false)
+        }
+    }
+
+    void setSourceDatabase(DatabaseConfig dbConfig) {
+        sqlCompare.srcDatabaseConfig = dbConfig
+    }
+
+    void useFileStoreAsSource() {
+        sqlCompare.srcScripts = fileStoreDir.absolutePath
+    }
+
+    void useFileStoreAsTarget() {
+        sqlCompare.targetScripts = fileStoreDir.absolutePath
+        if (!isSchemaStorePopulated()) {
+            sqlCompare.setDoMakeScripts(true)
+        }
+    }
+
+    void pushSourceToTarget() {
+        sqlCompare.setDoSynch(true).run()
+        if (isInitialCapture()) {
+            new SchemaFilterBugWorkaroundUtil().removeFilteredFiles(fileStoreDir)
+        }
+    }
+
+    void generateScriptToBuildSourceToTarget(File script) {
+        sqlCompare.setScriptFile(script.absolutePath)
+                .setDoSynch(false)
+                .run()
+    }
+
+    @Override
+    void initializeSchemaStore() {
+        if (!fileStoreDir.exists()) {
+            fileStoreDir.mkdir()
+        }
+
+        if (!configDir.exists()) {
+            configDir.mkdir()
+        }
+
+        if (!filterFile.exists()) {
+            filterFile.createNewFile()
+
+            this.getClass().getResource('/templates/redgate/filter.scpf').withInputStream { is->
+                filterFile << is
+            }
+        }
+    }
+
+    private boolean isSchemaStorePopulated() {
+        (new File(fileStoreDir, REDGATE_DATABASE_INFO_FILE_NAME)).exists()
+    }
+
+    private boolean isInitialCapture() {
+        return sqlCompare.doMakeScripts && sqlCompare.doSynch
+    }
+}

@@ -1,0 +1,37 @@
+apply plugin: 'application'
+
+mainClassName = "com.commercehub.dbratchet.cmdline.Main"
+applicationName = "DbRatchet"
+def applicationAlias = "ratchet"
+
+installApp{
+    destinationDir = file('D:/DbRatchet')
+}
+
+task createShorthandScritpAliases  {
+    dependsOn startScripts
+    def scripts = file("${buildDir}/scripts")
+    def shortHandScripts = file("${buildDir}/scripts-short")
+    outputs.dir shortHandScripts
+    doLast {
+        copy {
+            from scripts
+            into shortHandScripts
+            include "${applicationName}"
+            include "${applicationName}.bat"
+            rename { fileName ->
+                fileName.replace(applicationName, applicationAlias)
+            }
+        }
+    }
+}
+
+applicationDistribution.from(createShorthandScritpAliases) {
+    into "bin"
+}
+
+dependencies {
+	compile project(':dbratchet-core')
+    compile 'commons-cli:commons-cli:1.2'
+}
+
