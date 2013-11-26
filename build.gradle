@@ -26,10 +26,6 @@ cobertura {
     coverageIgnoreTrivial true
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.9'
-}
-
 idea {
     project {
         languageLevel = "1.6"
