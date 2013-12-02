@@ -10,7 +10,7 @@ commands expect to be run form the root of a *repository* directory. Running `ra
 currently commands supported by db-ratchet.
 
 ##Getting db-ratchet
-For now db-ratchet must be comiled from source. I will be working shortly to put this up on bintray.
+For now db-ratchet must be compiled from source. I will be working shortly to put this up on bintray.
 
 To install, simply unpack the zip file containing the release you want and make sure **&lt;install-root&gt;/db-ratchet/bin** 
 is added to your path.
