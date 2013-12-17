@@ -1,11 +1,11 @@
 apply plugin: 'application'
 
 mainClassName = "com.commercehub.dbratchet.cmdline.Main"
-applicationName = "DbRatchet"
+applicationName = "db-ratchet"
 def applicationAlias = "ratchet"
 
 installApp{
-    destinationDir = file('D:/DbRatchet')
+    destinationDir = file('D:/db-ratchet')
 }
 
 task createShorthandScritpAliases  {

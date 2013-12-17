@@ -46,7 +46,7 @@ subprojects { project ->
         key = project.hasProperty("bintrayApiKey") ? bintrayApiKey : null
         publications = ["mavenJava"]
         pkg {
-            repo = "main"
+            repo = "apps"
             userOrg = "commercehub-oss"
             name = project.rootProject.name
             licenses = ["Apache-2.0"]

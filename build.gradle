@@ -19,7 +19,7 @@ allprojects {
 }
 
 subprojects {
-    group = "com.commercehub.dbratchet"
+    group = "com.commercehub"
 }
 
 cobertura {
