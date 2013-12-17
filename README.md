@@ -10,7 +10,7 @@ commands expect to be run form the root of a *repository* directory. Running `ra
 currently commands supported by db-ratchet.
 
 ##Getting db-ratchet
-For now db-ratchet must be compiled from source. I will be working shortly to put this up on bintray.
+Releases of db-ratchet can be found on [Bintray](https://bintray.com/commercehub-oss/apps/db-ratchet)
 
 To install, simply unpack the zip file containing the release you want and make sure **&lt;install-root&gt;/db-ratchet/bin** 
 is added to your path.
@@ -19,7 +19,7 @@ is added to your path.
 Schema authoring support in db-ratchet is supported by use of a SchemaDifferenceEngine. A SchemaDifferenceEngine handles comparing databases
 and file store representations of databases to produce version upgrade scripts. Currently db-ratchet has a single SchemaDifferenceEngine
 implementation based on [Redgate SQlCompare](http://www.red-gate.com/products/sql-development/sql-compare/). There are near term plans to add
-another implementation based on XML representation of schema bjects that will not require commercial 3rd party software.
+another implementation based on XML representation of schema objects that will not require commercial 3rd party software.
 
 *The following diagram illustrates how schema management operations interact with the the database repository.*
 ![Schema Repository Operations](./docs/images/schema-workflow.jpg)
