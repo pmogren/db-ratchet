@@ -60,13 +60,12 @@ class VersionTest extends GroovyTestCase {
     }
 
     void testCompareTo() {
-        assert new Version(1,0,0).compareTo(new Version(1,0,0)) == 0
-        assert new Version(1,1,0).compareTo(new Version(1,0,0)) == 1
-        assert new Version(1,0,0).compareTo(new Version(1,1,0)) == -1
+        assert new Version(1,1,0) > new Version(1,0,0)
+        assert new Version(1,0,0) < new Version(1,1,0)
     }
 
     void testPadding() {
         Version v = new Version(1,1,1)
-        assert Version.metaClass.invokeMethod(v, "pad", 5, 5) == "00005"
+        assert Version.metaClass.invokeMethod(v, 'pad', 5, 5) == '00005'
     }
 }
