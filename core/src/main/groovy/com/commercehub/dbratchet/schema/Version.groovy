@@ -30,7 +30,7 @@ final class Version implements Comparable<Version> {
         assignVersions(versionParts[0].toInteger(), versionParts[1].toInteger(), versionParts[2].toInteger())
     }
 
-    private void assignVersions(int major, int minor, int point){
+    private void assignVersions(int major, int minor, int point) {
         majorVersion = major
         minorVersion = minor
         pointVersion = point
