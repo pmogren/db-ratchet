@@ -89,7 +89,7 @@ class Main {
         def cli = new CliBuilder(usage: 'bg init [options]')
         cli.with {
             t(longOpt: 'schema-type', required:false, args:1, argName:'schemaType',
-                                                      'Name of the Schema Differnece Engine to Use')
+                                                      'Name of the Schema Difference Engine to Use')
             h(longOpt: 'help',        required:false, 'Displays this usage message.')
         }
 
