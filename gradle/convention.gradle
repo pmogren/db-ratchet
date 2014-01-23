@@ -29,6 +29,10 @@ subprojects { project ->
         extension "jar"
     }
 
+    cobertura {
+        coverageIgnoreTrivial = true
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -55,3 +59,10 @@ subprojects { project ->
     bintrayUpload.dependsOn build, sourcesJar, javadocJar
     createReleaseTag.dependsOn bintrayUpload
 }
+
+def serTree = fileTree(dir: '.').matching {include '**/*.ser'}
+cobertura {
+    coverageFormats = [ 'xml', 'html' ]
+    coverageMergeDatafiles = serTree.files as List
+}
+test.dependsOn(subprojects.test)
