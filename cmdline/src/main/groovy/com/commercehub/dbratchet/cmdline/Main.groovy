@@ -332,7 +332,7 @@ class Main {
         return new StoreOperation(schemaConfig, options.a, getDBConfigFromCmdLineOptions(options))
     }
 
-    final String usageText =  '''DB-Ratchet Database Management
+    final String usageText =  '''db-ratchet Database Management
 
 commands:
 
