@@ -12,6 +12,8 @@ import nl.jqno.equalsverifier.Warning
 class VersionTest extends GroovyTestCase {
     void testVersionParsing() {
         assert new Version('001.0000.000000') == new Version(1,0,0)
+        assert new Version('001.0010.000006') == new Version(1,10,6)
+        assert new Version('999.9999.999999') == new Version(999,9999,999999)
     }
 
     void testPointVersionIncrement() {
@@ -27,21 +29,21 @@ class VersionTest extends GroovyTestCase {
     }
 
     void testMajorVersionIncrement() {
-        Version v = new Version(1,0,0)
+        Version v = new Version(1,1,1)
         v.incrementMajorVersion()
         assert v == new Version(2,0,0)
     }
 
     void testCopyConstructor() {
-        Version v1 = new Version(1,0,0)
+        Version v1 = new Version(1,1,1)
         Version v2 = new Version(v1)
         assert v1 == v2
         assert !v1.is(v2)
     }
 
     void testToString() {
-        Version v = new Version(1,0,10)
-        assert v.toString() == '001.0000.000010'
+        Version v = new Version(1,5,10)
+        assert v.toString() == '001.0005.000010'
     }
 
     void testEquals() {
@@ -55,5 +57,15 @@ class VersionTest extends GroovyTestCase {
         EqualsVerifier.forClass(Version)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .verify()
+    }
+
+    void testCompareTo() {
+        assert new Version(1,1,0) > new Version(1,0,0)
+        assert new Version(1,0,0) < new Version(1,1,0)
+    }
+
+    void testPadding() {
+        Version v = new Version(1,1,1)
+        assert Version.metaClass.invokeMethod(v, 'pad', 5, 5) == '00005'
     }
 }

@@ -3,7 +3,7 @@
         xsi:schemaLocation="http://codenarc.org/ruleset/1.0 http://codenarc.org/ruleset-schema.xsd"
         xsi:noNamespaceSchemaLocation="http://codenarc.org/ruleset-schema.xsd">
 
-    <description>BlackGate rule set</description>
+    <description>db-ratchet rule set</description>
 
     <ruleset-ref path='rulesets/basic.xml'/>
 	

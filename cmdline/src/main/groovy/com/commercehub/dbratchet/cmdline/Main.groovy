@@ -78,7 +78,7 @@ class Main {
 
     boolean performOperation(Operation operation) {
         if (!operation.isConfigured()) {
-            System.err.println "${operation.name} operation did not run do to missing required options."
+            System.err.println "${operation.name} operation did not run due to missing required options."
             return false
         }
 
@@ -86,10 +86,10 @@ class Main {
     }
 
     Operation getInitOperation(args) {
-        def cli = new CliBuilder(usage: 'bg init [options]')
+        def cli = new CliBuilder(usage: 'ratchet init [options]')
         cli.with {
             t(longOpt: 'schema-type', required:false, args:1, argName:'schemaType',
-                                                      'Name of the Schema Differnece Engine to Use')
+                                                      'Name of the Schema Difference Engine to Use')
             h(longOpt: 'help',        required:false, 'Displays this usage message.')
         }
 
@@ -108,7 +108,7 @@ class Main {
     }
 
     Operation getPullOperation(args) {
-        def cli = new CliBuilder(usage: 'bg pull [options]')
+        def cli = new CliBuilder(usage: 'ratchet pull [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for this set of stored credentials..')
@@ -137,7 +137,7 @@ class Main {
     }
 
     Operation getPushOperation(args) {
-        def cli = new CliBuilder(usage: 'bg push [options]')
+        def cli = new CliBuilder(usage: 'ratchet push [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for this set of stored credentials..')
@@ -167,7 +167,7 @@ class Main {
     }
 
     Operation getPublishOperation(args) {
-        def cli = new CliBuilder(usage: 'bg publish [options]')
+        def cli = new CliBuilder(usage: 'ratchet publish [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
@@ -208,7 +208,7 @@ class Main {
     }
 
     Operation getBuildOperation(args) {
-        def cli = new CliBuilder(usage: 'bg build [options]')
+        def cli = new CliBuilder(usage: 'ratchet build [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
@@ -245,7 +245,7 @@ class Main {
     }
 
     Operation getCaptureOperation(args) {
-        def cli = new CliBuilder(usage: 'bg capture [options]')
+        def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
@@ -275,7 +275,7 @@ class Main {
     }
 
     Operation getMigrateOperation(args) {
-        def cli = new CliBuilder(usage: 'bg capture [options]')
+        def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
@@ -305,7 +305,7 @@ class Main {
     }
 
     Operation getStoreOperation(args) {
-        def cli = new CliBuilder(usage: 'bg capture [options]')
+        def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:true,
                     'Alias for this set of stored credentials. REQUIRED.')
@@ -332,7 +332,7 @@ class Main {
         return new StoreOperation(schemaConfig, options.a, getDBConfigFromCmdLineOptions(options))
     }
 
-    final String usageText =  '''BlackGate Database Management
+    final String usageText =  '''db-ratchet Database Management
 
 commands:
 

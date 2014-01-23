@@ -18,9 +18,7 @@ final class Version implements Comparable<Version> {
     int pointVersion
 
     Version(int major, int minor, int point) {
-        majorVersion = major
-        minorVersion = minor
-        pointVersion = point
+        assignVersions(major, minor, point)
     }
 
     Version(Version versionToCopy) {
@@ -29,9 +27,13 @@ final class Version implements Comparable<Version> {
 
     Version(String versionString) {
         def versionParts = versionString.split('\\.')
-        majorVersion = versionParts[0].toInteger()
-        minorVersion = versionParts[1].toInteger()
-        pointVersion = versionParts[2].toInteger()
+        assignVersions(versionParts[0].toInteger(), versionParts[1].toInteger(), versionParts[2].toInteger())
+    }
+
+    private void assignVersions(int major, int minor, int point) {
+        majorVersion = major
+        minorVersion = minor
+        pointVersion = point
     }
 
     String toString() {
