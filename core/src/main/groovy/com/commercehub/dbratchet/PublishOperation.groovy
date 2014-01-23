@@ -160,7 +160,7 @@ class PublishOperation implements Operation {
     static String generateThrowAwayDatabaseName() {
         String uuid = UUID.randomUUID() as String
         String uniqPart = uuid.replaceAll('-', '')
-        return "bg_${uniqPart}"
+        return "ratchet_${uniqPart}"
 }
 
     @Override
