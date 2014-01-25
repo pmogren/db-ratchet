@@ -1,6 +1,7 @@
 package com.commercehub.dbratchet.cmdline
 
 import com.commercehub.dbratchet.*
+import com.commercehub.dbratchet.schema.Version
 
 /**
  * Created by Brett on 1/25/14.
@@ -106,23 +107,23 @@ class OperationManagerTest extends GroovyTestCase {
     void testPublishOperationCreation() {
         Operation operation = manager.getPublishOperation.call(emptyArgs)
         assert operation instanceof PublishOperation
-        assert ((PublishOperation)operation).publishType == PublishOperation.PUBLISH_TYPE.POINT
-    }
-
-    void testPublishOperationCreationWithHelp() {
-        assert manager.getPublishOperation.call(['-h']) == null
+        assert operation.publishType == PublishOperation.PUBLISH_TYPE.POINT
     }
 
     void testPublishOperationCreationMajorVersion() {
         Operation operation = manager.getPublishOperation.call(['--major'])
         assert operation instanceof PublishOperation
-        assert ((PublishOperation)operation).publishType == PublishOperation.PUBLISH_TYPE.MAJOR
+        assert operation.publishType == PublishOperation.PUBLISH_TYPE.MAJOR
     }
 
     void testPublishOperationCreationMinorVersion() {
         Operation operation = manager.getPublishOperation.call(['--minor'])
         assert operation instanceof PublishOperation
-        assert ((PublishOperation)operation).publishType == PublishOperation.PUBLISH_TYPE.MINOR
+        assert operation.publishType == PublishOperation.PUBLISH_TYPE.MINOR
+    }
+
+    void testPublishOperationCreationWithHelp() {
+        assert manager.getPublishOperation.call(['-h']) == null
     }
 
     void testBuildOperationCreation() {
@@ -130,7 +131,10 @@ class OperationManagerTest extends GroovyTestCase {
     }
 
     void testBuildOperationCreationWithVersion() {
-        assert manager.getBuildOperation.call(['-d', 'database', '-v', '0.0.0']) instanceof BuildOperation
+        Operation operation = manager.getBuildOperation.call(['-d', 'database', '-v', '0.0.0'])
+        assert operation instanceof BuildOperation
+        assert operation.version == new Version(0,0,0)
+
     }
 
     void testBuildOperationCreationWithHelp() {
@@ -172,7 +176,9 @@ class OperationManagerTest extends GroovyTestCase {
     }
 
     void testStoreOperationCreation() {
-        assert manager.getStoreOperation.call(['-a', 'alias', '-s', 'server']) instanceof StoreOperation
+        Operation operation = manager.getStoreOperation.call(['-a', 'alias', '-s', 'server'])
+        assert operation instanceof StoreOperation
+        assert operation.alias == 'alias'
     }
 
     void testStoreOperationCreationWithHelp() {
