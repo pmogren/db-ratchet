@@ -6,7 +6,7 @@ to be present in the database for application to function properly.
 #Usage
 db-ratchet manages a *repository-like* set of directories and files that make up the sources necessary to manage 
 a database. db-ratchet uses a command pattern that users of Mercurial or Git will be familiar with. All db-ratchet
-commands expect to be run form the root of a *repository* directory. Running `ratchet help` will print a list of 
+commands expect to be run from the root of a *repository* directory. Running `ratchet help` will print a list of 
 currently commands supported by db-ratchet.
 
 ##Getting db-ratchet
@@ -39,8 +39,8 @@ on configuring data packages.
 
 Data is stored in the data/packages directory and is based on the [DB Unit](http://dbunit.sourceforge.net/) XML format.
 
-Data migrations leverage temp tables ans *SQL MERGE* statements to minimize the work that is done inside of the boundaries of a database transaction. With
-this in mind we should be able to perform migrations for modest datasets without the need to shut down the system reading form the database. The migration
+Data migrations leverage temp tables and *SQL MERGE* statements to minimize the work that is done inside of the boundaries of a database transaction. With
+this in mind we should be able to perform migrations for modest datasets without the need to shut down the system reading from the database. The migration
 of a database package will succeed or fail atomically, so the possibility of leaving behind an inconsistent dataset is eliminated.
 
 The choice to use *SQL MERGE* statements was based on this tool initially being developed for management of SQL Server databases only. Future plans for this
@@ -58,11 +58,11 @@ to install your test copy locally between builds.
 
 ##Code Quality and Testing
 The build script for db-ratchet runs the [CodeNarc](http://www.gradle.org/docs/current/userguide/codenarc_plugin.html) plugin for Gradle. CodeNarc is a static
-analysis tool for Groovy. A rule set specific to the db-ratchet project is configured in config/codenarc/codenarc.xml of this Mercurial repository. The build 
+analysis tool for Groovy. A rule set specific to the db-ratchet project is configured in config/codenarc/codenarc.xml of this Git repository. The build 
 is configured to fail the build for any rule violations. Please keep this code clean.
 
 The build script for db-ratchet runs Cobertura to capture code coverage data. We use an open source 
-[Cobertura Plugin](https://github.com/stevesaliman/gradle-cobertura-plugin). To capture code coverage data run the **cobertura** task in gradle. Do to an issue with
+[Cobertura Plugin](https://github.com/stevesaliman/gradle-cobertura-plugin). To capture code coverage data run the **cobertura** task in gradle. Due to an issue with
 the current version of this plugin, cobertura will print a stacktrace to the console during instrumentation claiming that it can't load several classes in the project.
 Despite this noise in the console, instrumentation will complete successfully and a code coverage report will be generated. For now, these stack traces can be ignored.
 
