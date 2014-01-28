@@ -87,7 +87,7 @@ class PublishOperation implements Operation {
         String dbName = generateThrowAwayDatabaseName()
         boolean hasDatabaseBeenCreated = runCreateDatabaseCommand(dbConfig, dbName)
         if (!hasDatabaseBeenCreated) {
-            System.err.println "Unalble to create database [${dbName}] on server [${dbConfig.server}]"
+            System.err.println "Unable to create database [${dbName}] on server [${dbConfig.server}]"
             return false
         }
         DatabaseConfig dbConfigWithDatabase = dbConfig.clone().setDatabase(dbName)
@@ -97,7 +97,7 @@ class PublishOperation implements Operation {
             if (hasDatabaseBeenCreated) {
                 if (!dropDatabase(dbConfig, dbName)) {
                     System.err.println "ERROR: Unable to clean up database [${dbConfig.server}.${dbName}]. " +
-                            'Please make sure to clean this up maunally'
+                            'Please make sure to clean this up manually'
                 }
             }
         }
