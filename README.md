@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/commercehub-oss/db-ratchet.png?branch=master)](https://travis-ci.org/commercehub-oss/db-ratchet)
+
 #What is db-ratchet?
 db-ratchet is a tool to manage database compositions through the use of small incremental versions (individual clicks of a ratchet). This 
 tool handles both the schema that defines a databases structure and behaviour as well as *control data* that the system requires
