@@ -44,7 +44,7 @@ class OperationManager {
             h(longOpt: 'help',        required:false, 'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -62,7 +62,7 @@ class OperationManager {
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aliasPresent,
                     'Database server to pull schema from. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
                     'Name of database to pull schema from. REQUIRED.')
@@ -73,7 +73,7 @@ class OperationManager {
             h(longOpt: 'help', required:false, 'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -89,7 +89,7 @@ class OperationManager {
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aliasPresent,
                     'Database server to push schema to. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
                     'Name of database to push schema to. REQUIRED.')
@@ -101,7 +101,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -117,7 +117,7 @@ class OperationManager {
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aliasPresent,
                     'Database server to assist in publish operation. REQUIRED if alias not present.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
                     'Database server login to use. Leave blank to use Active Directory authentication.')
@@ -133,7 +133,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -161,7 +161,7 @@ class OperationManager {
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aliasPresent,
                     'Database server to create database on. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
                     'Name of database to create. REQUIRED.')
@@ -175,7 +175,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -197,7 +197,7 @@ class OperationManager {
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aliasPresent,
                     'Database server to capture database from. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
                     'Name of database to capture from. REQUIRED.')
@@ -209,7 +209,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -225,7 +225,7 @@ class OperationManager {
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aliasPresent,
                     'Database server to migrate database to. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
                     'Name of database to migrate to. REQUIRED.')
@@ -237,7 +237,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -263,7 +263,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.hPresent) {
+        if (ppc.helpPresent) {
             cli.usage()
             return
         }
@@ -302,17 +302,19 @@ class OperationManager {
 
     @TupleConstructor
     class PreProcessContext {
-        boolean hPresent
-        boolean aPresent
+        boolean helpPresent
+        boolean aliasPresent
     }
 
     DatabaseConfig getDBConfigFromCmdLineOptions(OptionAccessor options) {
         DatabaseConfig dbConfig
+
         if (options.a) {
             ServerCredentialStore credStore = new ServerCredentialStore(schemaConfig)
-            dbConfig = credStore.get(options.a) ?: new DatabaseConfig(server: (options.s ?: null),
-                    user: (options.u ?: null), password: (options.p ?: null))
-        } else {
+            dbConfig = credStore.get(options.a)
+        }
+
+        if (!dbConfig) {
             dbConfig = new DatabaseConfig(server: (options.s ?: null), user: (options.u ?: null),
                     password: (options.p ?: null))
         }
