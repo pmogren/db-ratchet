@@ -313,11 +313,9 @@ class OperationManager {
             ServerCredentialStore credStore = new ServerCredentialStore(schemaConfig)
             dbConfig = credStore.get(options.a)
         }
-
-        if (!dbConfig) {
-            dbConfig = new DatabaseConfig(server: (options.s ?: null), user: (options.u ?: null),
-                    password: (options.p ?: null))
-        }
+        
+        dbConfig = dbConfig ?: new DatabaseConfig(server: (options.s ?: null), user: (options.u ?: null),
+                password: (options.p ?: null))
 
         dbConfig.setDatabase(options.d ?: null)
 
