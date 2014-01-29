@@ -11,7 +11,7 @@ class OperationManagerTest extends GroovyTestCase {
 
     private final OperationManager manager = new OperationManager()
     private final emptyArgs = []
-    private final databaseArg = ['-d', 'database']
+    private final serverAndDatabaseArg = ['-s', 'server', '-d', 'database']
 
     void setUp() {
         super.setUp()
@@ -77,11 +77,15 @@ class OperationManagerTest extends GroovyTestCase {
     }
 
     void testPullOperationCreation() {
-        assert manager.getPullOperation.call(databaseArg) instanceof PullOperation
+        assert manager.getPullOperation.call(serverAndDatabaseArg) instanceof PullOperation
     }
 
     void testPullOperationCreationWithHelp() {
         assert manager.getPullOperation.call(['-h']) == null
+    }
+
+    void testPullOperationCreationWithAlias() {
+        assert manager.getPullOperation.call(['-a', 'alias', '-d', 'database']) instanceof PullOperation
     }
 
     void testPullOperationCreationEmptyArgs() {
@@ -91,11 +95,15 @@ class OperationManagerTest extends GroovyTestCase {
     }
 
     void testPushOperationCreation() {
-        assert manager.getPushOperation.call(databaseArg) instanceof PushOperation
+        assert manager.getPushOperation.call(serverAndDatabaseArg) instanceof PushOperation
     }
 
     void testPushOperationCreationWithHelp() {
         assert manager.getPushOperation.call(['-h']) == null
+    }
+
+    void testPushOperationCreationWithAlias() {
+        assert manager.getPushOperation.call(['-a', 'alias', '-d', 'database']) instanceof PushOperation
     }
 
     void testPushOperationCreationEmptyArgs() {
@@ -105,19 +113,19 @@ class OperationManagerTest extends GroovyTestCase {
     }
 
     void testPublishOperationCreation() {
-        Operation operation = manager.getPublishOperation.call(emptyArgs)
+        Operation operation = manager.getPublishOperation.call(['-s', 'server'])
         assert operation instanceof PublishOperation
         assert operation.publishType == PublishOperation.PUBLISH_TYPE.POINT
     }
 
     void testPublishOperationCreationMajorVersion() {
-        Operation operation = manager.getPublishOperation.call(['--major'])
+        Operation operation = manager.getPublishOperation.call(['-s', 'server', '--major'])
         assert operation instanceof PublishOperation
         assert operation.publishType == PublishOperation.PUBLISH_TYPE.MAJOR
     }
 
     void testPublishOperationCreationMinorVersion() {
-        Operation operation = manager.getPublishOperation.call(['--minor'])
+        Operation operation = manager.getPublishOperation.call(['-s', 'server', '--minor'])
         assert operation instanceof PublishOperation
         assert operation.publishType == PublishOperation.PUBLISH_TYPE.MINOR
     }
@@ -126,12 +134,16 @@ class OperationManagerTest extends GroovyTestCase {
         assert manager.getPublishOperation.call(['-h']) == null
     }
 
+    void testPublishOperationCreationWithAlias() {
+        assert manager.getPublishOperation.call(['-a', 'alias']) instanceof PublishOperation
+    }
+
     void testBuildOperationCreation() {
-        assert manager.getBuildOperation.call(databaseArg) instanceof BuildOperation
+        assert manager.getBuildOperation.call(serverAndDatabaseArg) instanceof BuildOperation
     }
 
     void testBuildOperationCreationWithVersion() {
-        Operation operation = manager.getBuildOperation.call(['-d', 'database', '-v', '0.0.0'])
+        Operation operation = manager.getBuildOperation.call(serverAndDatabaseArg + ['-v', '0.0.0'])
         assert operation instanceof BuildOperation
         assert operation.version == new Version(0,0,0)
 
@@ -141,6 +153,10 @@ class OperationManagerTest extends GroovyTestCase {
         assert manager.getBuildOperation.call(['-h']) == null
     }
 
+    void testBuildOperationCreationWithAlias() {
+        assert manager.getBuildOperation.call(['-a', 'alias', '-d', 'database']) instanceof BuildOperation
+    }
+
     void testBuildOperationCreationEmptyArgs() {
         shouldFail(InvalidOptionsException) {
             manager.getBuildOperation.call(emptyArgs)
@@ -148,11 +164,15 @@ class OperationManagerTest extends GroovyTestCase {
     }
 
     void testCaptureOperationCreation() {
-        assert manager.getCaptureOperation.call(databaseArg) instanceof CaptureOperation
+        assert manager.getCaptureOperation.call(serverAndDatabaseArg) instanceof CaptureOperation
     }
 
     void testCaptureOperationCreationWithHelp() {
         assert manager.getCaptureOperation.call(['-h']) == null
+    }
+
+    void testCaptureOperationCreationWithAlias() {
+        assert manager.getCaptureOperation.call(['-a', 'alias', '-d', 'database']) instanceof CaptureOperation
     }
 
     void testCaptureOperationCreationEmptyArgs() {
@@ -162,11 +182,15 @@ class OperationManagerTest extends GroovyTestCase {
     }
 
     void testMigrateOperationCreation() {
-        assert manager.getMigrateOperation.call(databaseArg) instanceof MigrateOperation
+        assert manager.getMigrateOperation.call(serverAndDatabaseArg) instanceof MigrateOperation
     }
 
     void testMigrateOperationCreationWithHelp() {
         assert manager.getMigrateOperation.call(['-h']) == null
+    }
+
+    void testMigrateOperationCreationWithAlias() {
+        assert manager.getMigrateOperation.call(['-a', 'alias', '-d', 'database']) instanceof MigrateOperation
     }
 
     void testMigrateOperationCreationEmptyArgs() {
@@ -191,6 +215,79 @@ class OperationManagerTest extends GroovyTestCase {
         }
     }
 
+    void testGetDBConfigFromCmdLineOptionsWithAlias() {
+        CliBuilder cli = new CliBuilder()
+
+        cli.with {
+            a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
+                    'Alias for a set of stored credentials.')
+        }
+
+        OptionAccessor optionAccessor = cli.parse(['-a', 'alias', '-s', 'server'])
+
+        ServerCredentialStore.metaClass.get = { String alias -> return new DatabaseConfig(server:'server') }
+
+        assert manager.getDBConfigFromCmdLineOptions(optionAccessor).server == 'server'
+
+        ServerCredentialStore.metaClass = null
+    }
+
+    void testGetDBConfigFromCmdLineOptionsWithUnmappedAlias() {
+        CliBuilder cli = new CliBuilder()
+
+        cli.with {
+            a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
+                    'Alias for a set of stored credentials.')
+            s(longOpt: 'server',     args:1, argName:'server',   required:false,
+                    'Database server for this set of credentials. REQUIRED.')
+            u(longOpt: 'user',       args:1, argName:'user',     required:false,
+                    'Database server login for this set of credentials.')
+            p(longOpt: 'password',   args:1, argName:'password', required:false,
+                    'Database server password for this set of credentials.')
+            d(longOpt: 'database',   args:1, argName:'database', required:false,
+                    'Name of database to create. REQUIRED.')
+        }
+
+        OptionAccessor optionAccessor =
+                cli.parse(['-a', 'alias', '-s', 'server', '-u', 'user', '-p', 'password', '-d', 'database'])
+
+        ServerCredentialStore.metaClass.get = { String alias -> return null }
+
+        DatabaseConfig dbConfig = manager.getDBConfigFromCmdLineOptions(optionAccessor)
+
+        assert dbConfig.server == 'server'
+        assert dbConfig.user == 'user'
+        assert dbConfig.password == 'password'
+        assert dbConfig.database == 'database'
+
+        ServerCredentialStore.metaClass = null
+    }
+
+    void testGetDBConfigFromCmdLineOptionsWithAllOptions() {
+        CliBuilder cli = new CliBuilder()
+
+        cli.with {
+            s(longOpt: 'server',     args:1, argName:'server',   required:false,
+                    'Database server for this set of credentials. REQUIRED.')
+            u(longOpt: 'user',       args:1, argName:'user',     required:false,
+                    'Database server login for this set of credentials.')
+            p(longOpt: 'password',   args:1, argName:'password', required:false,
+                    'Database server password for this set of credentials.')
+            d(longOpt: 'database',   args:1, argName:'database', required:false,
+                    'Name of database to create. REQUIRED.')
+        }
+
+        OptionAccessor optionAccessor =
+                cli.parse(['-s', 'server', '-u', 'user', '-p', 'password', '-d', 'database'])
+
+        DatabaseConfig dbConfig = manager.getDBConfigFromCmdLineOptions(optionAccessor)
+
+        assert dbConfig.server == 'server'
+        assert dbConfig.user == 'user'
+        assert dbConfig.password == 'password'
+        assert dbConfig.database == 'database'
+    }
+
     void testGetDBConfigFromCmdLineOptionsWithServer() {
         CliBuilder cli = new CliBuilder()
 
@@ -201,7 +298,12 @@ class OperationManagerTest extends GroovyTestCase {
 
         OptionAccessor optionAccessor = cli.parse(['-s', 'server'])
 
-        assert manager.getDBConfigFromCmdLineOptions(optionAccessor).server == 'server'
+        DatabaseConfig dbConfig = manager.getDBConfigFromCmdLineOptions(optionAccessor)
+
+        assert dbConfig.server == 'server'
+        assert dbConfig.user == null
+        assert dbConfig.password == null
+        assert dbConfig.database == null
     }
 
     void testGetDBConfigFromCmdLineOptionsWithUser() {
@@ -214,7 +316,12 @@ class OperationManagerTest extends GroovyTestCase {
 
         OptionAccessor optionAccessor = cli.parse(['-u', 'user'])
 
-        assert manager.getDBConfigFromCmdLineOptions(optionAccessor).user == 'user'
+        DatabaseConfig dbConfig = manager.getDBConfigFromCmdLineOptions(optionAccessor)
+
+        assert dbConfig.user == 'user'
+        assert dbConfig.server == null
+        assert dbConfig.password == null
+        assert dbConfig.database == null
     }
 
     void testGetDBConfigFromCmdLineOptionsWithPassword() {
@@ -227,7 +334,12 @@ class OperationManagerTest extends GroovyTestCase {
 
         OptionAccessor optionAccessor = cli.parse(['-p', 'password'])
 
-        assert manager.getDBConfigFromCmdLineOptions(optionAccessor).password == 'password'
+        DatabaseConfig dbConfig = manager.getDBConfigFromCmdLineOptions(optionAccessor)
+
+        assert dbConfig.password == 'password'
+        assert dbConfig.server == null
+        assert dbConfig.user == null
+        assert dbConfig.database == null
     }
 
     void testGetDBConfigFromCmdLineOptionsWithDatabase() {
@@ -240,6 +352,11 @@ class OperationManagerTest extends GroovyTestCase {
 
         OptionAccessor optionAccessor = cli.parse(['-d', 'database'])
 
-        assert manager.getDBConfigFromCmdLineOptions(optionAccessor).database == 'database'
+        DatabaseConfig dbConfig = manager.getDBConfigFromCmdLineOptions(optionAccessor)
+
+        assert dbConfig.database == 'database'
+        assert dbConfig.server == null
+        assert dbConfig.user == null
+        assert dbConfig.password == null
     }
 }

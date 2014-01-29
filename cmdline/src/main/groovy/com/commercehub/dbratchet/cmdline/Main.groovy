@@ -72,23 +72,23 @@ class Main {
 
 commands:
 
- init       Creates a schema/data repository in the current working directory
-            REQUIRES RedGate SQL Compare license
+ init       Creates a schema/data repository in the current working directory.
+            REQUIRES RedGate SQL Compare license.
 
- push       Pushes a schema definition from this repository to a database
-            REQUIRES RedGate SQL Compare license
+ push       Pushes a schema definition from this repository to a database.
+            REQUIRES RedGate SQL Compare license.
 
- pull       Pulls a schema definition from a database to this repository
-            REQUIRES RedGate SQL Compare license
+ pull       Pulls a schema definition from a database to this repository.
+            REQUIRES RedGate SQL Compare license.
 
- publish    Publishes schema definition as plain sql scripts
+ publish    Publishes schema definition as plain sql scripts.
 
  build      Creates or updates a database (schema only) based on
-            published scripts
+            published scripts.
 
- capture    Captures data packages from a database
+ capture    Captures data packages from a database.
 
- migrate    Migrates data packages to a database
+ migrate    Migrates data packages to a database.
 
  store      Stores database credentials for future reference.
 

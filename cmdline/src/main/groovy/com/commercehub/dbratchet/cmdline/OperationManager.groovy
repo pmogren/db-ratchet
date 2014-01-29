@@ -3,6 +3,7 @@ package com.commercehub.dbratchet.cmdline
 import com.commercehub.dbratchet.*
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.Version
+import groovy.transform.TupleConstructor
 
 /**
  * Created by Brett on 1/25/14.
@@ -34,6 +35,8 @@ class OperationManager {
     }
 
     def getInitOperation = { args ->
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
         def cli = new CliBuilder(usage: 'ratchet init [options]')
         cli.with {
             t(longOpt: 'schema-type', required:false, args:1, argName:'schemaType',
@@ -41,7 +44,7 @@ class OperationManager {
             h(longOpt: 'help',        required:false, 'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -53,14 +56,16 @@ class OperationManager {
     }
 
     def getPullOperation = { args ->
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
         def cli = new CliBuilder(usage: 'ratchet pull [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
-                    'Alias for this set of stored credentials..')
-            s(longOpt: 'server',     args:1, argName:'server',   required:false,
-                    'Database server to use to pull schema from. REQUIRED.')
+                    'Alias for a set of stored credentials.')
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+                    'Database server to pull schema from. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
-                    'Name of database to use to pull schema from. REQUIRED.')
+                    'Name of database to pull schema from. REQUIRED.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
                     'Database server login to use. Leave blank to use Active Directory authentication.')
             p(longOpt: 'password',   args:1, argName:'password', required:false,
@@ -68,7 +73,7 @@ class OperationManager {
             h(longOpt: 'help', required:false, 'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -78,14 +83,16 @@ class OperationManager {
     }
 
     def getPushOperation = { args ->
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
         def cli = new CliBuilder(usage: 'ratchet push [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
-                    'Alias for this set of stored credentials..')
-            s(longOpt: 'server',     args:1, argName:'server',   required:false,
-                    'Database server to use to push schema to. REQUIRED.')
+                    'Alias for a set of stored credentials.')
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+                    'Database server to push schema to. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
-                    'Name of database to use to push schema to. REQUIRED.')
+                    'Name of database to push schema to. REQUIRED.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
                     'Database server login to use. Leave blank to use Active Directory authentication.')
             p(longOpt: 'password',   args:1, argName:'password', required:false,
@@ -94,7 +101,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -104,12 +111,14 @@ class OperationManager {
     }
 
     def getPublishOperation = { args ->
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
         def cli = new CliBuilder(usage: 'ratchet publish [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:false,
-                    'Database server to use to push schema to. REQUIRED.')
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+                    'Database server to assist in publish operation. REQUIRED if alias not present.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
                     'Database server login to use. Leave blank to use Active Directory authentication.')
             p(longOpt: 'password',   args:1, argName:'password', required:false,
@@ -124,7 +133,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -146,12 +155,14 @@ class OperationManager {
     }
 
     def getBuildOperation = { args ->
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
         def cli = new CliBuilder(usage: 'ratchet build [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:false,
-                    'Database server to use to create database on. REQUIRED.')
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+                    'Database server to create database on. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
                     'Name of database to create. REQUIRED.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
@@ -164,7 +175,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -180,14 +191,16 @@ class OperationManager {
     }
 
     def getCaptureOperation = { args ->
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
         def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:false,
-                    'Database server to use to create database on. REQUIRED.')
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+                    'Database server to capture database from. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
-                    'Name of database to create. REQUIRED.')
+                    'Name of database to capture from. REQUIRED.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
                     'Database server login to use. Leave blank to use Active Directory authentication.')
             p(longOpt: 'password',   args:1, argName:'password', required:false,
@@ -196,7 +209,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -206,14 +219,16 @@ class OperationManager {
     }
 
     def getMigrateOperation = { args ->
-        def cli = new CliBuilder(usage: 'ratchet capture [options]')
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
+        def cli = new CliBuilder(usage: 'ratchet migrate [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
                     'Alias for a set of stored credentials.')
-            s(longOpt: 'server',     args:1, argName:'server',   required:false,
-                    'Database server to use to create database on. REQUIRED.')
+            s(longOpt: 'server',     args:1, argName:'server',   required:!ppc.aPresent,
+                    'Database server to migrate database to. REQUIRED if alias not present.')
             d(longOpt: 'database',   args:1, argName:'database', required:true,
-                    'Name of database to create. REQUIRED.')
+                    'Name of database to migrate to. REQUIRED.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
                     'Database server login to use. Leave blank to use Active Directory authentication.')
             p(longOpt: 'password',   args:1, argName:'password', required:false,
@@ -222,7 +237,7 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -232,21 +247,23 @@ class OperationManager {
     }
 
     def getStoreOperation = { args ->
+        PreProcessContext ppc = preProcessCmdLineArgs(args)
+
         def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:true,
                     'Alias for this set of stored credentials. REQUIRED.')
             s(longOpt: 'server',     args:1, argName:'server',   required:true,
-                    'Database server for this set of credentials. REQUIRED.')
+                    'Database server for this set of stored credentials. REQUIRED.')
             u(longOpt: 'user',       args:1, argName:'user',     required:false,
-                    'Database server login for this set of credentials.')
+                    'Database server login for this set of stored credentials.')
             p(longOpt: 'password',   args:1, argName:'password', required:false,
-                    'Database server password for this set of credentials.')
+                    'Database server password for this set of stored credentials.')
             h(longOpt: 'help',                                   required:false,
                     'Displays this usage message.')
         }
 
-        if (helpOptionPresent(args)) {
+        if (ppc.hPresent) {
             cli.usage()
             return
         }
@@ -264,45 +281,43 @@ class OperationManager {
         return options
     }
 
-    boolean helpOptionPresent(def args) {
+    PreProcessContext preProcessCmdLineArgs(def args) {
         def cli = new CliBuilder()
         cli.with {
+            a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
+                    'Alias for a set of stored credentials.')
             h(longOpt: 'help',        required:false, 'Displays this usage message.')
         }
 
         def options = cli.parse(args)
 
         if (options.h) {
-            return true
+            return new PreProcessContext(true, false)
+        } else if (options.a) {
+            return new PreProcessContext(false, true)
         }
 
-        return false
+        return new PreProcessContext(false, false)
+    }
+
+    @TupleConstructor
+    class PreProcessContext {
+        boolean hPresent
+        boolean aPresent
     }
 
     DatabaseConfig getDBConfigFromCmdLineOptions(OptionAccessor options) {
-        DatabaseConfig dbConfig = null
+        DatabaseConfig dbConfig
         if (options.a) {
             ServerCredentialStore credStore = new ServerCredentialStore(schemaConfig)
-            dbConfig = credStore.get(options.a) ?: new DatabaseConfig()
+            dbConfig = credStore.get(options.a) ?: new DatabaseConfig(server: (options.s ?: null),
+                    user: (options.u ?: null), password: (options.p ?: null))
         } else {
-            dbConfig = new DatabaseConfig()
-
-            if (options.s) {
-                dbConfig.setServer(options.s)
-            }
-
-            if (options.u) {
-                dbConfig.setUser(options.u)
-            }
-
-            if (options.p) {
-                dbConfig.setPassword(options.p)
-            }
+            dbConfig = new DatabaseConfig(server: (options.s ?: null), user: (options.u ?: null),
+                    password: (options.p ?: null))
         }
 
-        if (options.d) {
-            dbConfig.setDatabase(options.d)
-        }
+        dbConfig.setDatabase(options.d ?: null)
 
         return dbConfig
     }
