@@ -50,7 +50,7 @@ class OperationManager {
 
     def getStoreOperation = { args -> return basicOperation(args, getStoreCli, processStoreCli) }
 
-    private def basicOperation(args, cmdLineParseClosure, cmdLineProcessClosure) {
+    private basicOperation(args, cmdLineParseClosure, cmdLineProcessClosure) {
         PreProcessContext ppc = preProcessCmdLineArgs(args)
 
         def cli = cmdLineParseClosure.call(ppc)
@@ -91,7 +91,7 @@ class OperationManager {
         return options
     }
 
-    private def getInitCli = { PreProcessContext ppc ->
+    private final getInitCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet init [options]')
         cli.with {
             t(longOpt: 'schema-type', required:false, args:1, argName:'schemaType',
@@ -102,7 +102,7 @@ class OperationManager {
         return cli
     }
 
-    private def getPullCli = { PreProcessContext ppc ->
+    private final getPullCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet pull [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -121,7 +121,7 @@ class OperationManager {
         return cli
     }
 
-    private def getPushCli = { PreProcessContext ppc ->
+    private final getPushCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet push [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -141,7 +141,7 @@ class OperationManager {
         return cli
     }
 
-    private def getPublishCli = { PreProcessContext ppc ->
+    private final getPublishCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet publish [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -165,7 +165,7 @@ class OperationManager {
         return cli
     }
 
-    private def getBuildCli = { PreProcessContext ppc ->
+    private final getBuildCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet build [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -187,7 +187,7 @@ class OperationManager {
         return cli
     }
 
-    private def getCaptureCli = { PreProcessContext ppc ->
+    private final getCaptureCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -207,7 +207,7 @@ class OperationManager {
         return cli
     }
 
-    private def getMigrateCli = { PreProcessContext ppc ->
+    private final getMigrateCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet migrate [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -227,7 +227,7 @@ class OperationManager {
         return cli
     }
 
-    private def getStoreCli = { PreProcessContext ppc ->
+    private final getStoreCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:true,
@@ -245,20 +245,20 @@ class OperationManager {
         return cli
     }
 
-    private def processInitCli = { def options ->
+    private final processInitCli = { def options ->
         String schemaType = (options.t) ? options.t : 'redgate'
         return new InitOperation(schemaConfig, schemaType)
     }
 
-    private def processPullCli = { def options ->
+    private final processPullCli = { def options ->
         return new PullOperation(schemaConfig, getDBConfigFromCmdLineOptions(options))
     }
 
-    private def processPushCli = { def options ->
+    private final processPushCli = { def options ->
         return new PushOperation(schemaConfig, getDBConfigFromCmdLineOptions(options))
     }
 
-    private def processPublishCli = { def options ->
+    private final processPublishCli = { def options ->
         def publishType = PublishOperation.PUBLISH_TYPE.POINT
 
         if (options.major) {
@@ -273,7 +273,7 @@ class OperationManager {
         return returnOp
     }
 
-    private def processBuildCli = { def options ->
+    private final processBuildCli = { def options ->
         Version version = null
         if (options.v) {
             version = new Version(options.v)
@@ -282,15 +282,15 @@ class OperationManager {
         return new BuildOperation(getDBConfigFromCmdLineOptions(options), version)
     }
 
-    private def processCaptureCli = { def options ->
+    private final processCaptureCli = { def options ->
         return new CaptureOperation(getDBConfigFromCmdLineOptions(options))
     }
 
-    private def processMigrateCli = { def options ->
+    private final processMigrateCli = { def options ->
         return new MigrateOperation(getDBConfigFromCmdLineOptions(options))
     }
 
-    private def processStoreCli = { def options ->
+    private final processStoreCli = { def options ->
         return new StoreOperation(schemaConfig, options.a, getDBConfigFromCmdLineOptions(options))
     }
 
