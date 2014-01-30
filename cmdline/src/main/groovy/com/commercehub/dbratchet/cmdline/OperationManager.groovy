@@ -34,9 +34,64 @@ class OperationManager {
         return operations.get(command)
     }
 
-    def getInitOperation = { args ->
+    def getInitOperation = { args -> return basicOperation(args, getInitCli, processInitCli) }
+
+    def getPullOperation = { args -> return basicOperation(args, getPullCli, processPullCli) }
+
+    def getPushOperation = { args -> return basicOperation(args, getPushCli, processPushCli) }
+
+    def getPublishOperation = { args -> return basicOperation(args, getPublishCli, processPublishCli) }
+
+    def getBuildOperation = { args -> return basicOperation(args, getBuildCli, processBuildCli) }
+
+    def getCaptureOperation = { args -> return basicOperation(args, getCaptureCli, processCaptureCli) }
+
+    def getMigrateOperation = { args -> return basicOperation(args, getMigrateCli, processMigrateCli) }
+
+    def getStoreOperation = { args -> return basicOperation(args, getStoreCli, processStoreCli) }
+
+    private def basicOperation(args, cmdLineParseClosure, cmdLineProcessClosure) {
         PreProcessContext ppc = preProcessCmdLineArgs(args)
 
+        def cli = cmdLineParseClosure.call(ppc)
+
+        if (ppc.helpPresent) {
+            cli.usage()
+            return
+        }
+
+        return cmdLineProcessClosure.call(processOptions(cli, args))
+    }
+
+    private PreProcessContext preProcessCmdLineArgs(def args) {
+        def cli = new CliBuilder()
+        cli.with {
+            a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
+                    'Alias for a set of stored credentials.')
+            h(longOpt: 'help',        required:false, 'Displays this usage message.')
+        }
+
+        def options = cli.parse(args)
+
+        if (options.h) {
+            return new PreProcessContext(true, false)
+        } else if (options.a) {
+            return new PreProcessContext(false, true)
+        }
+
+        return new PreProcessContext(false, false)
+    }
+
+    private OptionAccessor processOptions(cli, args) {
+        def options = cli.parse(args)
+        if (!options) {
+            throw new InvalidOptionsException()
+        }
+
+        return options
+    }
+
+    private def getInitCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet init [options]')
         cli.with {
             t(longOpt: 'schema-type', required:false, args:1, argName:'schemaType',
@@ -44,20 +99,10 @@ class OperationManager {
             h(longOpt: 'help',        required:false, 'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
-        }
-
-        def options = processOptions(cli, args)
-
-        String schemaType = (options.t) ? options.t : 'redgate'
-        return new InitOperation(schemaConfig, schemaType)
+        return cli
     }
 
-    def getPullOperation = { args ->
-        PreProcessContext ppc = preProcessCmdLineArgs(args)
-
+    private def getPullCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet pull [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -73,18 +118,10 @@ class OperationManager {
             h(longOpt: 'help', required:false, 'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
-        }
-
-        def options = processOptions(cli, args)
-        return new PullOperation(schemaConfig, getDBConfigFromCmdLineOptions(options))
+        return cli
     }
 
-    def getPushOperation = { args ->
-        PreProcessContext ppc = preProcessCmdLineArgs(args)
-
+    private def getPushCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet push [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -101,18 +138,10 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
-        }
-
-        def options = processOptions(cli, args)
-        return new PushOperation(schemaConfig, getDBConfigFromCmdLineOptions(options))
+        return cli
     }
 
-    def getPublishOperation = { args ->
-        PreProcessContext ppc = preProcessCmdLineArgs(args)
-
+    private def getPublishCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet publish [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -133,30 +162,10 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
-        }
-
-        def options = processOptions(cli, args)
-
-        def publishType = PublishOperation.PUBLISH_TYPE.POINT
-
-        if (options.major) {
-            publishType = PublishOperation.PUBLISH_TYPE.MAJOR
-        } else if (options.minor) {
-            publishType = PublishOperation.PUBLISH_TYPE.MINOR
-        }
-
-        PublishOperation returnOp =
-                new PublishOperation(schemaConfig, getDBConfigFromCmdLineOptions(options), publishType)
-
-        return returnOp
+        return cli
     }
 
-    def getBuildOperation = { args ->
-        PreProcessContext ppc = preProcessCmdLineArgs(args)
-
+    private def getBuildCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet build [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -175,24 +184,10 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
-        }
-
-        def options = processOptions(cli, args)
-
-        Version version = null
-        if (options.v) {
-            version = new Version(options.v)
-        }
-
-        return new BuildOperation(getDBConfigFromCmdLineOptions(options), version)
+        return cli
     }
 
-    def getCaptureOperation = { args ->
-        PreProcessContext ppc = preProcessCmdLineArgs(args)
-
+    private def getCaptureCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -209,18 +204,10 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
-        }
-
-        def options = processOptions(cli, args)
-        return new CaptureOperation(getDBConfigFromCmdLineOptions(options))
+        return cli
     }
 
-    def getMigrateOperation = { args ->
-        PreProcessContext ppc = preProcessCmdLineArgs(args)
-
+    private def getMigrateCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet migrate [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
@@ -237,18 +224,10 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
-        }
-
-        def options = processOptions(cli, args)
-        return new MigrateOperation(getDBConfigFromCmdLineOptions(options))
+        return cli
     }
 
-    def getStoreOperation = { args ->
-        PreProcessContext ppc = preProcessCmdLineArgs(args)
-
+    private def getStoreCli = { PreProcessContext ppc ->
         def cli = new CliBuilder(usage: 'ratchet capture [options]')
         cli.with {
             a(longOpt: 'alias',      args:1, argName:'alias',    required:true,
@@ -263,50 +242,59 @@ class OperationManager {
                     'Displays this usage message.')
         }
 
-        if (ppc.helpPresent) {
-            cli.usage()
-            return
+        return cli
+    }
+
+    private def processInitCli = { def options ->
+        String schemaType = (options.t) ? options.t : 'redgate'
+        return new InitOperation(schemaConfig, schemaType)
+    }
+
+    private def processPullCli = { def options ->
+        return new PullOperation(schemaConfig, getDBConfigFromCmdLineOptions(options))
+    }
+
+    private def processPushCli = { def options ->
+        return new PushOperation(schemaConfig, getDBConfigFromCmdLineOptions(options))
+    }
+
+    private def processPublishCli = { def options ->
+        def publishType = PublishOperation.PUBLISH_TYPE.POINT
+
+        if (options.major) {
+            publishType = PublishOperation.PUBLISH_TYPE.MAJOR
+        } else if (options.minor) {
+            publishType = PublishOperation.PUBLISH_TYPE.MINOR
         }
 
-        def options = processOptions(cli, args)
+        PublishOperation returnOp =
+                new PublishOperation(schemaConfig, getDBConfigFromCmdLineOptions(options), publishType)
+
+        return returnOp
+    }
+
+    private def processBuildCli = { def options ->
+        Version version = null
+        if (options.v) {
+            version = new Version(options.v)
+        }
+
+        return new BuildOperation(getDBConfigFromCmdLineOptions(options), version)
+    }
+
+    private def processCaptureCli = { def options ->
+        return new CaptureOperation(getDBConfigFromCmdLineOptions(options))
+    }
+
+    private def processMigrateCli = { def options ->
+        return new MigrateOperation(getDBConfigFromCmdLineOptions(options))
+    }
+
+    private def processStoreCli = { def options ->
         return new StoreOperation(schemaConfig, options.a, getDBConfigFromCmdLineOptions(options))
     }
 
-    private OptionAccessor processOptions(cli, args) {
-        def options = cli.parse(args)
-        if (!options) {
-            throw new InvalidOptionsException()
-        }
-
-        return options
-    }
-
-    PreProcessContext preProcessCmdLineArgs(def args) {
-        def cli = new CliBuilder()
-        cli.with {
-            a(longOpt: 'alias',      args:1, argName:'alias',    required:false,
-                    'Alias for a set of stored credentials.')
-            h(longOpt: 'help',        required:false, 'Displays this usage message.')
-        }
-
-        def options = cli.parse(args)
-
-        if (options.h) {
-            return new PreProcessContext(true, false)
-        } else if (options.a) {
-            return new PreProcessContext(false, true)
-        }
-
-        return new PreProcessContext(false, false)
-    }
-
-    @TupleConstructor
-    class PreProcessContext {
-        boolean helpPresent
-        boolean aliasPresent
-    }
-
-    DatabaseConfig getDBConfigFromCmdLineOptions(OptionAccessor options) {
+    private DatabaseConfig getDBConfigFromCmdLineOptions(OptionAccessor options) {
         DatabaseConfig dbConfig
 
         if (options.a) {
@@ -320,5 +308,11 @@ class OperationManager {
         dbConfig.setDatabase(options.d ?: null)
 
         return dbConfig
+    }
+
+    @TupleConstructor
+    private class PreProcessContext {
+        boolean helpPresent
+        boolean aliasPresent
     }
 }
