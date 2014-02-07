@@ -161,7 +161,7 @@ class PublishOperation implements Operation {
         String uuid = UUID.randomUUID() as String
         String uniqPart = uuid.replaceAll('-', '')
         return "ratchet_${uniqPart}"
-}
+    }
 
     @Override
     boolean isConfigured() {
