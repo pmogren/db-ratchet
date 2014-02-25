@@ -237,22 +237,26 @@ class MigrateOperation implements Operation {
     private List<String> getPrimaryKeyColumnsForTable(Sql sql, String tableName) {
         TableSpec tableSpec = new TableSpec(tableName)
         List<String> pkColumns = [] as Queue<String>
-        sql.eachRow("""SELECT sc.name
-                        FROM   sysobjects s1,
-                               sysobjects s2,
-                               sysindexes si,
-                               sysindexkeys sik,
-                               syscolumns sc
-                        WHERE  s1.xtype = 'PK'
-                               AND s1.parent_obj = s2.id
-                               AND s2.name = ?
-                               AND s2.id = si.id
-                               AND s1.name = si.name
-                               AND s2.id = sik.id
-                               AND si.indid = sik.indid
-                               AND s2.id = sc.id
-                               AND sc.colid = sik.colid""",
-                [tableSpec.name]) { row->
+
+        def pkQuery = '''SELECT c.name
+                        FROM   sys.objects AS pk
+                               INNER JOIN sys.objects AS tbl
+                                       ON tbl.[object_id] = pk.parent_object_id
+                               INNER JOIN sys.schemas AS s
+                                       ON s.[schema_id] = tbl.[schema_id]
+                               INNER JOIN sys.indexes AS i
+                                       ON i.[object_id] = tbl.[object_id]
+                                          AND i.name = pk.name
+                                          AND i.is_primary_key = 1
+                               INNER JOIN sys.index_columns AS ic
+                                       ON ic.[object_id] = i.[object_id]
+                                          AND ic.index_id = i.index_id
+                               INNER JOIN sys.[columns] AS c
+                                       ON c.column_id = ic.column_id
+                                          AND c.[object_id] = tbl.[object_id]
+                        WHERE  tbl.name = ? AND s.name = ?'''
+
+        sql.eachRow(pkQuery, [tableSpec.name, tableSpec.schema]) { row ->
             pkColumns.add(row.name)
         }
 
