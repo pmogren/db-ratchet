@@ -91,7 +91,7 @@ class MigrateOperation implements Operation {
 
     private String getMergeSqlForTable(String table, Map<String, String> tableToTempTableMap, Sql sql) {
         List<String> pkColumns = getPrimaryKeyColumnsForTable(sql, table)
-        List<String> dataColumns = getDataColumnsForTale(sql, table, pkColumns)
+        List<String> dataColumns = getDataColumnsForTable(sql, table, pkColumns)
         String sqlStr = """merge ${table} as target
                             using ${tableToTempTableMap.get(table)} as source
                             on ${getMatchSql(pkColumns)}
@@ -237,17 +237,29 @@ class MigrateOperation implements Operation {
     private List<String> getPrimaryKeyColumnsForTable(Sql sql, String tableName) {
         TableSpec tableSpec = new TableSpec(tableName)
         List<String> pkColumns = [] as Queue<String>
-        sql.eachRow("""SELECT column_name FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                       WHERE OBJECTPROPERTY(OBJECT_ID(constraint_name), 'IsPrimaryKey') = 1 AND table_name = ?
-                       AND table_schema = ? order by ordinal_position asc""",
-                [tableSpec.name, tableSpec.schema]) { row->
-            pkColumns.add(row.column_name)
+        sql.eachRow("""SELECT sc.name
+                        FROM   sysobjects s1,
+                               sysobjects s2,
+                               sysindexes si,
+                               sysindexkeys sik,
+                               syscolumns sc
+                        WHERE  s1.xtype = 'PK'
+                               AND s1.parent_obj = s2.id
+                               AND s2.name = ?
+                               AND s2.id = si.id
+                               AND s1.name = si.name
+                               AND s2.id = sik.id
+                               AND si.indid = sik.indid
+                               AND s2.id = sc.id
+                               AND sc.colid = sik.colid""",
+                [tableSpec.name]) { row->
+            pkColumns.add(row.name)
         }
 
         return pkColumns
     }
 
-    private List<String> getDataColumnsForTale(Sql sql, String tableName, List<String> pkColumns) {
+    private List<String> getDataColumnsForTable(Sql sql, String tableName, List<String> pkColumns) {
         List<String> dataColumns = [] as Queue<String>
         sql.eachRow('select name from sys.columns where object_id = OBJECT_ID(?) order by column_id asc',
                 [tableName]) { row->
