@@ -9,7 +9,7 @@ def appInstallPath = ''
 if (os.contains("windows")) {
     appInstallPath = 'D:/db-ratchet'
 } else if (os.contains("mac os")) {
-    appInstallPath = '~/db-ratchet'
+    appInstallPath = "${System.getProperty('user.home')}/db-ratchet"
 } else {
     appInstallPath = './db-ratchet'
 }
