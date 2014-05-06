@@ -1,4 +1,4 @@
-rootProject.name = "dbratchet"
+rootProject.name = "db-ratchet"
 
 include "core"
 include "cmdline"

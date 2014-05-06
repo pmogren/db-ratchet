@@ -41,7 +41,7 @@ applicationDistribution.from(createShorthandScritpAliases) {
 }
 
 dependencies {
-	compile project(':dbratchet-core')
+	compile project(':db-ratchet-core')
     compile 'commons-cli:commons-cli:1.2'
 }
 

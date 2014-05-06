@@ -13,13 +13,15 @@ class SchemaMigrator {
     Flyway flyway
 
     SchemaMigrator(DatabaseConfig dbConfig) {
-        flyway = new Flyway()
-        flyway.setDataSource(dbConfig.jdbcUrl, dbConfig.user, dbConfig.password)
-        flyway.setLocations("filesystem:${Version.VERSIONS_DIR}")
-        flyway.setSqlMigrationSuffix('upgrade.sql')
-        flyway.setInitVersion('000.0000.000000')
-        flyway.setInitOnMigrate(true)
-        flyway.setSchemas('dbo')
+        flyway = new Flyway().with {
+            setDataSource(dbConfig.jdbcUrl, dbConfig.user, dbConfig.password)
+            setLocations("filesystem:${Version.VERSIONS_DIR}")
+            setSqlMigrationSuffix('upgrade.sql')
+            setInitVersion('000.0000.000000')
+            setInitOnMigrate(true)
+            setSchemas('dbo')
+            it
+        }
     }
 
     void migrate(Version version) {

@@ -12,8 +12,9 @@ allprojects {
     }
 }
 
+
+
 subprojects { project ->
-    apply plugin: "maven-publish"
     apply plugin: "groovy"
     sourceCompatibility = 1.6
 
@@ -32,6 +33,10 @@ subprojects { project ->
     cobertura {
         coverageIgnoreTrivial = true
     }
+}
+
+project(':db-ratchet-core') {
+    apply plugin: "maven-publish"
 
     publishing {
         publications {
@@ -50,14 +55,48 @@ subprojects { project ->
         key = project.hasProperty("bintrayApiKey") ? bintrayApiKey : null
         publications = ["mavenJava"]
         pkg {
-            repo = "apps"
+            repo = "main"
             userOrg = "commercehub-oss"
-            name = project.rootProject.name
+            name = 'db-ratchet-core'
             licenses = ["Apache-2.0"]
         }
     }
     bintrayUpload.dependsOn build, sourcesJar, javadocJar
-    createReleaseTag.dependsOn bintrayUpload
+    rootProject.createReleaseTag.dependsOn bintrayUpload
+}
+
+project(':db-ratchet-cmdline') {
+    apply plugin: "application"
+    apply plugin: "maven-publish"
+
+    artifacts {
+        archives distZip
+    }
+
+    publishing {
+        publications {
+            mavenApp(MavenPublication) {
+                artifactId = 'db-ratchet'
+                artifact distZip
+            }
+        }
+    }
+
+    apply plugin: "bintray"
+
+    bintray {
+        user = project.hasProperty("bintrayUserName") ? bintrayUserName : null
+        key = project.hasProperty("bintrayApiKey") ? bintrayApiKey : null
+        publications = ["mavenApp"]
+        pkg {
+            repo = "apps"
+            userOrg = "commercehub-oss"
+            name = 'db-ratchet'
+            licenses = ["Apache-2.0"]
+        }
+    }
+    bintrayUpload.dependsOn build, distZip
+    rootProject.createReleaseTag.dependsOn bintrayUpload
 }
 
 def serTree = fileTree(dir: '.').matching {include '**/*.ser'}
