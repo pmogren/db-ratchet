@@ -19,6 +19,7 @@ class SchemaMigrator {
         flyway.setSqlMigrationSuffix('upgrade.sql')
         flyway.setInitVersion('000.0000.000000')
         flyway.setInitOnMigrate(true)
+        flyway.setSchemas('dbo')
     }
 
     void migrate(Version version) {
