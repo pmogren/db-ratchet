@@ -7,7 +7,7 @@ def applicationAlias = "ratchet"
 def os = System.getProperty("os.name").toLowerCase()
 def appInstallPath = ''
 if (os.contains("windows")) {
-    appInstallPath = '/db-ratchet'
+    appInstallPath = 'C:/db-ratchet'
 } else if (os.contains("mac os")) {
     appInstallPath = "${System.getProperty('user.home')}/db-ratchet"
 } else {
