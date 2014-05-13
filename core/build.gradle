@@ -3,6 +3,7 @@ dependencies {
     compile 'org.dbunit:dbunit:2.4.9'
     compile 'com.googlecode.flyway:flyway-core:2.2.1'
     compile 'ch.qos.logback:logback-classic:0.9.15'
+    compile 'commons-cli:commons-cli:1.2'
 
     testCompile 'nl.jqno.equalsverifier:equalsverifier:1.3.1'
 }

@@ -65,6 +65,36 @@ project(':db-ratchet-core') {
     rootProject.createReleaseTag.dependsOn bintrayUpload
 }
 
+
+project(':db-ratchet-gradle-plugin') {
+    apply plugin: "maven-publish"
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+            }
+        }
+    }
+
+    apply plugin: "bintray"
+
+    bintray {
+        user = project.hasProperty("bintrayUserName") ? bintrayUserName : null
+        key = project.hasProperty("bintrayApiKey") ? bintrayApiKey : null
+        publications = ["mavenJava"]
+        pkg {
+            repo = "main"
+            userOrg = "commercehub-oss"
+            name = 'db-ratchet-gradle-plugin'
+            licenses = ["Apache-2.0"]
+        }
+    }
+    bintrayUpload.dependsOn build, sourcesJar, javadocJar
+    rootProject.createReleaseTag.dependsOn bintrayUpload
+}
+
 project(':db-ratchet-cmdline') {
     apply plugin: "application"
     apply plugin: "maven-publish"
