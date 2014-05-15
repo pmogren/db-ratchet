@@ -15,6 +15,7 @@ class MigrateOperation implements Operation {
     final String name = 'Migrate'
 
     DatabaseConfig dbConfig
+    boolean isDataOnClasspath = false
 
     MigrateOperation(DatabaseConfig dbConfig) {
         this.dbConfig = dbConfig
@@ -23,7 +24,7 @@ class MigrateOperation implements Operation {
     @Override
     boolean run() {
         Date startTime = new Date()
-        DataPackageConfig dataPackageConfig = DataPackageConfig.load()
+        DataPackageConfig dataPackageConfig = DataPackageConfig.load(isDataOnClasspath)
         dataPackageConfig.packages.each  { dataPackage->
             migratePackage(dataPackage)
         }

@@ -20,17 +20,22 @@ class BuildOperation implements Operation {
     DatabaseConfig dbConfigWithoutDbName
     Version version
     SqlRunner sqlRunner
+    SchemaConfig schemaConfig
 
     BuildOperation(DatabaseConfig dbConfig, Version version) {
+        this(dbConfig, version, new SchemaConfig())
+    }
+
+    BuildOperation(DatabaseConfig dbConfig, Version version, SchemaConfig schemaConfig) {
         this.dbConfig = dbConfig
         dbConfigWithoutDbName = dbConfig.clone().setDatabase(null)
         this.version = version
+        this.schemaConfig = schemaConfig
         this.sqlRunner = new SqlRunnerFactory().sqlRunner
     }
 
     @Override
     boolean run() {
-        SchemaConfig schemaConfig = new SchemaConfig()
         version = version ?: schemaConfig.version
 
         boolean returnVal = true
@@ -65,8 +70,16 @@ class BuildOperation implements Operation {
     }
 
     private void doSchemaMigration(Version version) {
-        SchemaMigrator schemaMigrator = new SchemaMigrator(dbConfig)
+        SchemaMigrator schemaMigrator = new SchemaMigrator(dbConfig, schemaLocationType)
         schemaMigrator.migrate(version)
+    }
+
+    SchemaMigrator.LocationType getSchemaLocationType() {
+        if (schemaConfig.isFileURI()) {
+            return SchemaMigrator.LocationType.FILE
+        }
+
+        return SchemaMigrator.LocationType.CLASSPATH
     }
 
     @Override

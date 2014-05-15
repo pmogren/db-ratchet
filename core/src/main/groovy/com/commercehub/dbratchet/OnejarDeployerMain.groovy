@@ -1,5 +1,6 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.Version
 
 /**
@@ -8,6 +9,8 @@ import com.commercehub.dbratchet.schema.Version
 class OnejarDeployerMain {
     DatabaseConfig dbConfig
     Version version
+    boolean isSchemaOnly = false
+    boolean isDataOnly = false
 
     private OnejarDeployerMain(DatabaseConfig dbConfig, Version version) {
         this.dbConfig = dbConfig
@@ -23,17 +26,27 @@ class OnejarDeployerMain {
             System.exit(1)
         }
 
-        deployer.doBuildOperation()
-        deployer.migrate()
+        deployer.run()
+    }
+
+    void run() {
+        if (!isDataOnly) {
+            doBuildOperation()
+        }
+        if (!isSchemaOnly) {
+            migrate()
+        }
     }
 
     void migrate() {
         Operation migrateOp = new MigrateOperation(dbConfig)
+        migrateOp.isDataOnClasspath = true
         migrateOp.run()
     }
 
     void doBuildOperation() {
-        Operation buildOp = new BuildOperation(dbConfig, version)
+        Operation buildOp = new BuildOperation(dbConfig, version,
+                                               new SchemaConfig(new URI('classpath:/')))
         buildOp.run()
     }
 
@@ -51,13 +64,16 @@ class OnejarDeployerMain {
                     'Database server password to use. Leave blank to use Active Directory authentication.')
             v(longOpt: 'version',    args:1, argName:'version',  required:false,
                     'Schema version to use in creating this database.')
+            _(longOpt: 'schema-only',                            required:false,
+                    'Only build out database schema.')
+            _(longOpt: 'data-only',                              required:false,
+                    'Only build out control data.')
             h(longOpt: 'help',                                   required:false,
                     'Displays this usage message.')
         }
 
         def options = cli.parse(args)
         if (!options) {
-            cli.usage()
             throw new IllegalArgumentException()
         }
 
@@ -66,7 +82,20 @@ class OnejarDeployerMain {
             version = new Version(options.v)
         }
 
-        return new OnejarDeployerMain(getDBConfigFromCmdLineOptions(options), version)
+        def main = new com.commercehub.dbratchet.OnejarDeployerMain(getDBConfigFromCmdLineOptions(options), version)
+
+        if (options.'schema-only') {
+            main.isSchemaOnly = true
+        }
+        if (options.'data-only') {
+            main.isDataOnly = true
+        }
+        if (main.isSchemaOnly && main.isDataOnly) {
+            System.err.println('Cannot specify both --schema-only and --data-only')
+            throw new IllegalArgumentException()
+        }
+
+        return main
     }
 
     private static DatabaseConfig getDBConfigFromCmdLineOptions(OptionAccessor options) {

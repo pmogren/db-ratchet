@@ -14,11 +14,15 @@ class DataPackageConfig {
     }
 
     static DataPackageConfig load() {
+        return load(false)
+    }
+
+    static DataPackageConfig load(boolean isDataOnClasspath) {
         DataPackageConfig dataPackageConfig = new DataPackageConfig()
-        new File('./data/packages').mkdir()
-        def xmlConfig = new XmlSlurper().parse(new File('./data/data-packages.xml'))
+        def xmlConfig = new XmlSlurper().parse(getDataPackageFile(isDataOnClasspath))
         xmlConfig.package.each { packageElement->
             DataPackage dataPackage = new DataPackage()
+            dataPackage.isOnClassPath = isDataOnClasspath
             if (packageElement.@name.size() > 0) {
                 dataPackage.setName(packageElement.@name.text())
             }
@@ -37,5 +41,14 @@ class DataPackageConfig {
             dataPackageConfig.add(dataPackage)
         }
         return dataPackageConfig
+    }
+
+    static getDataPackageFile(boolean isDataOnClasspath) {
+        if (isDataOnClasspath) {
+            return DataPackageConfig.getResourceAsStream('/data/data-packages.xml')
+        }
+
+        new File('./data/packages').mkdir()
+        return new File('./data/data-packages.xml')
     }
 }

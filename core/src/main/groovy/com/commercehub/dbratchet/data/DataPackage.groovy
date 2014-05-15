@@ -8,9 +8,13 @@ package com.commercehub.dbratchet.data
  */
 class DataPackage {
     String name
+    boolean isOnClassPath
     List<String> tables = [] as Queue<String>
 
-    File getDataFile() {
+    def getDataFile() {
+        if (isOnClassPath) {
+            return DataPackage.getResourceAsStream("/data/packages/${name}.xml")
+        }
         return new File('./data/packages', "${name}.xml")
     }
 }

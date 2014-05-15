@@ -10,12 +10,27 @@ import com.googlecode.flyway.core.Flyway
  * Time: 5:14 PM
  */
 class SchemaMigrator {
+    enum LocationType {
+        FILE('filesystem'),
+        CLASSPATH('classpath')
+
+        final String type
+
+        LocationType(String type) {
+            this.type = type
+        }
+    }
+
     Flyway flyway
 
     SchemaMigrator(DatabaseConfig dbConfig) {
+        this(dbConfig, LocationType.FILE)
+    }
+
+    SchemaMigrator(DatabaseConfig dbConfig, LocationType locationType) {
         flyway = new Flyway().with {
             setDataSource(dbConfig.jdbcUrl, dbConfig.user, dbConfig.password)
-            setLocations("filesystem:${Version.VERSIONS_DIR}")
+            setLocations("${locationType.type}:${Version.VERSIONS_DIR}")
             setSqlMigrationSuffix('upgrade.sql')
             setInitVersion('000.0000.000000')
             setInitOnMigrate(true)

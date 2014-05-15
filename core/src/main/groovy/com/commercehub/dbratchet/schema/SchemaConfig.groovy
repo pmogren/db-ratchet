@@ -1,5 +1,8 @@
 package com.commercehub.dbratchet.schema
 
+import com.googlecode.flyway.core.util.Resource
+import com.googlecode.flyway.core.util.scanner.classpath.ClassPathScanner
+
 /**
  * Created with IntelliJ IDEA.
  * User: jgelais
@@ -7,23 +10,60 @@ package com.commercehub.dbratchet.schema
  * Time: 10:48 AM
  */
 class SchemaConfig {
-    public static final String SCHEMA_DIR = './schema'
-    public static final String REDGATE_CONFIG_DIR = 'redgate-config'
     public static final String DATA_DIR = 'data'
+    public static final String FLYWAY_MIGRATION_SUFFIX = '__upgrade.sql'
+    public static final String FLYWAY_MIGRATION_PREFIX = 'V'
 
-    File rootDir
+    URI schemaRoot
     List<Version> versions
 
     SchemaConfig() {
-        this(new File('.'))
+        this(new File('.').toURI())
     }
 
     SchemaConfig(File dir) {
-        rootDir = dir
-        versions = scanFileSystemPublishedVersionDirs()
+        this(dir.toURI())
     }
 
-    private List<Version> scanFileSystemPublishedVersionDirs() {
+    SchemaConfig(URI uri) {
+        schemaRoot = uri
+        versions = scanSchemaRootForPublishedVersions()
+    }
+
+    File getRootDir() {
+        if (isFileURI()) {
+            return new File(schemaRoot)
+        }
+
+        throw new IllegalStateException('Cannot get schema root as a file when schema is not rooted on '
+                + "the filesystem. SchemaRoot: ${schemaRoot}")
+    }
+
+    boolean isFileURI() {
+        'file'.equalsIgnoreCase(schemaRoot.scheme)
+    }
+
+    private List<Version> scanSchemaRootForPublishedVersions() {
+        if (isFileURI()) {
+            return scanFileSystemForPublishedForVersions(new File(schemaRoot))
+        }
+
+        return scanClasspathForPublishedForVersions()
+    }
+
+    private List<Version> scanClasspathForPublishedForVersions() {
+        def versions = [] as Queue<com.commercehub.dbratchet.schema.Version>
+
+        new ClassPathScanner().scanForResources("${Version.VERSIONS_DIR}",
+                FLYWAY_MIGRATION_PREFIX, FLYWAY_MIGRATION_SUFFIX).each { Resource resource->
+            def versionString = resource.filename[1..(resource.filename.indexOf(FLYWAY_MIGRATION_SUFFIX) - 1)]
+            versions.add(new Version(versionString))
+        }
+
+        return versions.sort()
+    }
+
+    private List<Version> scanFileSystemForPublishedForVersions(File rootDir) {
         List<Version> returnList = [] as Queue<String>
         File versionsDir = new File(rootDir, Version.VERSIONS_DIR)
         if (versionsDir.exists() && versionsDir.isDirectory()) {

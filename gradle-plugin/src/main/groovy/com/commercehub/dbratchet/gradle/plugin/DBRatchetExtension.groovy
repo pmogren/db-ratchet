@@ -9,6 +9,6 @@ class DBRatchetExtension {
     String dbRatchetVersion = '0.2.0'
 
     DBRatchetExtension(Project project) {
-        project.logger.info "Creating cobertura extension for project ${project.name}"
+        project.logger.info "Creating db-ratchet extension for project ${project.name}"
     }
 }

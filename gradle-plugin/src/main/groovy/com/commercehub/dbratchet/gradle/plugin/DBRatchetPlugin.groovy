@@ -15,6 +15,8 @@ class DBRatchetPlugin implements Plugin<Project> {
     public static final String PACKAGE_TASK_NAME = 'package'
     public static final String DB_RATCHET_EXTENSION_NAME = 'dbRatchet'
     public static final String DB_RATCHET_CONFIGURATION_NAME = 'dbRatchet'
+    public static final String VERSIONS_DIR = 'versions'
+    public static final String DATA_DIR = 'data'
 
     @Override
     void apply(Project project) {
@@ -27,6 +29,7 @@ class DBRatchetPlugin implements Plugin<Project> {
             project.afterEvaluate {
                 project.dependencies {
                     dbRatchet("com.commercehub:db-ratchet-core:${extension.dbRatchetVersion}")
+                    dbRatchet('net.sourceforge.jtds:jtds:1.2.4')
                 }
             }
         }
@@ -35,21 +38,33 @@ class DBRatchetPlugin implements Plugin<Project> {
     }
 
     void populateTaskGraph(Project project) {
-        // databaseJar task
-        project.tasks.create(name: DATABASE_JAR_TASK_NAME, type: Jar)
-        Jar databaseJarTask = project.tasks.getByName(DATABASE_JAR_TASK_NAME)
-        databaseJarTask.destinationDir = new File(project.buildDir, 'libs')
-        databaseJarTask.archiveName = 'schemaAndData.jar'
-        databaseJarTask.into('schema') {
-            from "${project.rootDir}/versions"
-        }
-        databaseJarTask.into('data') {
-            from "${project.rootDir}/data"
-        }
-
         // package task
-        project.tasks.create(name: PACKAGE_TASK_NAME, type: PackageTask, dependsOn: databaseJarTask)
-        PackageTask packageTask = project.tasks.getByName(PACKAGE_TASK_NAME)
+        project.tasks.create(name: PACKAGE_TASK_NAME, type: Jar)
+        Jar packageTask = project.tasks.getByName(PACKAGE_TASK_NAME)
+        packageTask.dependsOn project.configurations.dbRatchet
+        packageTask.classifier = 'db-ratchet'
+        packageTask.inputs.files([new File(project.rootDir, VERSIONS_DIR), new File(project.rootDir, DATA_DIR)])
+        packageTask.manifest {
+            attributes('Main-Class': 'com.commercehub.dbratchet.OnejarDeployerMain')
+        }
+        packageTask.doFirst {
+            packageTask.from((project.configurations.dbRatchet).collect {
+                it.isDirectory() ? it : project.zipTree(it)
+            }) {
+                exclude 'META-INF/*.SF'
+                exclude 'META-INF/*.DSA'
+                exclude 'META-INF/*.RSA'
+                exclude 'META-INF/DEPENDENCIES'
+                exclude 'META-INF/LICENSE'
+                exclude 'META-INF/NOTICE'
+            }
+            packageTask.into(VERSIONS_DIR) {
+                from "${project.rootDir}/${VERSIONS_DIR}"
+            }
+            packageTask.into(DATA_DIR) {
+                from "${project.rootDir}/${DATA_DIR}"
+            }
+        }
 
         // build task
         project.tasks.create(name: BUILD_TASK_NAME, type: DefaultTask, dependsOn: packageTask)
