@@ -3,8 +3,7 @@ package com.commercehub.dbratchet.schema.redgate
 import com.commercehub.dbratchet.DatabaseConfig
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.SchemaDifferenceEngine
-
-import java.util.regex.Pattern
+import com.commercehub.dbratchet.util.FileUtil
 
 /**
  * Created with IntelliJ IDEA.
@@ -141,7 +140,7 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
     private void doWhiteListFilter(File dir, def patterns) {
         def filesToKeep = []
         patterns.each { pattern->
-            dir.eachFileMatch(convertWildcardToRegex(pattern)) { file->
+            dir.eachFileMatch(FileUtil.convertWildcardToRegex(pattern)) { file->
                 filesToKeep.add(file)
             }
         }
@@ -154,13 +153,11 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
 
     private void doBlackListFilter(File dir, def patterns) {
         patterns.each { pattern->
-            dir.eachFileMatch(convertWildcardToRegex(pattern)) { file->
+            dir.eachFileMatch(FileUtil.convertWildcardToRegex(pattern)) { file->
                 file.delete()
             }
         }
     }
 
-    private Pattern convertWildcardToRegex(String pattern) {
-        return Pattern.compile(pattern.replaceAll(/\*/, '.*').replaceAll(/\?/, '.'))
-    }
+
 }
