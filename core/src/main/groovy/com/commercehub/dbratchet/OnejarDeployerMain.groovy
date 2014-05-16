@@ -1,5 +1,6 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.filestore.ClasspathFileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.Version
 
@@ -46,7 +47,7 @@ class OnejarDeployerMain {
 
     void doBuildOperation() {
         Operation buildOp = new BuildOperation(dbConfig, version,
-                                               new SchemaConfig(new URI('classpath:/')))
+                                               new SchemaConfig(new ClasspathFileStore()))
         buildOp.run()
     }
 

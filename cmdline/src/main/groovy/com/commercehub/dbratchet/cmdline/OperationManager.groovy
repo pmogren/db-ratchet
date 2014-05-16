@@ -1,6 +1,7 @@
 package com.commercehub.dbratchet.cmdline
 
 import com.commercehub.dbratchet.*
+import com.commercehub.dbratchet.filestore.FileSystemFileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.Version
 import groovy.transform.TupleConstructor
@@ -13,7 +14,7 @@ import groovy.transform.TupleConstructor
 @SuppressWarnings('SystemExit')
 class OperationManager {
 
-    private final SchemaConfig schemaConfig = new SchemaConfig(new File('.'))
+    private final SchemaConfig schemaConfig = new SchemaConfig(new FileSystemFileStore())
 
     private final Map<String, Closure> operations
 
@@ -279,7 +280,8 @@ class OperationManager {
             version = new Version(options.v)
         }
 
-        return new BuildOperation(getDBConfigFromCmdLineOptions(options), version)
+        return new BuildOperation(getDBConfigFromCmdLineOptions(options), version,
+                new SchemaConfig(new FileSystemFileStore()))
     }
 
     private final processCaptureCli = { def options ->

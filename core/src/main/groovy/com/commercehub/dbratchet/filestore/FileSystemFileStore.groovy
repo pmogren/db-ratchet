@@ -31,11 +31,16 @@ class FileSystemFileStore implements FileStore {
 
     @Override
     List<String> scanRecursivelyForFiles(String path, String filePattern) {
+        def list = [] as Queue<String>
         File rootDir = getFile(path)
+
+        if (!rootDir.exists()) {
+            return list
+        }
+
         if (!rootDir.isDirectory()) {
             throw new IllegalArgumentException("path [${path}] is not a directory!")
         }
-        def list = [] as Queue<String>
         Pattern pattern = FileUtil.convertWildcardToRegex(filePattern)
         rootDir.eachFileRecurse(FileType.FILES) { file->
             if (pattern.matcher(file.path).matches()) {

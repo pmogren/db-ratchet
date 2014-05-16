@@ -22,10 +22,6 @@ class BuildOperation implements Operation {
     SqlRunner sqlRunner
     SchemaConfig schemaConfig
 
-    BuildOperation(DatabaseConfig dbConfig, Version version) {
-        this(dbConfig, version, new SchemaConfig())
-    }
-
     BuildOperation(DatabaseConfig dbConfig, Version version, SchemaConfig schemaConfig) {
         this.dbConfig = dbConfig
         dbConfigWithoutDbName = dbConfig.clone().setDatabase(null)
