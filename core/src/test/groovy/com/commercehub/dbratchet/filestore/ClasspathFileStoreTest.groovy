@@ -14,9 +14,10 @@ class ClasspathFileStoreTest extends GroovyTestCase {
     void testGetFileInputStream() {
         FileStore filestore = new ClasspathFileStore()
         String text = filestore.getFileInputStream("${RESOURCE_BASE}/${TEST_RESOURCE}").text
-        assert TEST_RESOURCE_CONTENT.equals(text)
+        assert TEST_RESOURCE_CONTENT == text
     }
 
+    @SuppressWarnings('CatchException')
     void testGetFileOutputStream() {
         FileStore filestore = new ClasspathFileStore()
         try {
@@ -30,9 +31,10 @@ class ClasspathFileStoreTest extends GroovyTestCase {
     void testGetFileAsResource() {
         FileStore filestore = new ClasspathFileStore()
         String text = filestore.getFileAsResource("${RESOURCE_BASE}/${TEST_RESOURCE}").openStream().text
-        assert TEST_RESOURCE_CONTENT.equals(text)
+        assert TEST_RESOURCE_CONTENT == text
     }
 
+    @SuppressWarnings('CatchException')
     void testGetFile() {
         FileStore filestore = new ClasspathFileStore()
         try {
@@ -51,7 +53,7 @@ class ClasspathFileStoreTest extends GroovyTestCase {
         assert list.contains('test-resource1.txt')
         assert list.contains('test-resource2.txt')
 
-        assert !filestore.scanRecursivelyForFiles('/java/util/regex', 'Pattern.class').isEmpty()
+        assert !filestore.scanRecursivelyForFiles('/com/googlecode/flyway/core', 'Flyway.class').isEmpty()
     }
 
     void testThatIUnderstandRegex() {

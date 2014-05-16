@@ -50,8 +50,8 @@ class ClasspathUtil {
             while (e.hasMoreElements()) {
                 ZipEntry ze = (ZipEntry) e.nextElement()
                 String resourceName = "/${ze.name}"
-                if (resourceName.contains(path)) {
-                    String fileName = resourceName[path.length()+1..-1]
+                if (resourceName.contains("$path/") && resourceName.length() > path.length() + 1) {
+                    String fileName = resourceName[path.length() + 1..-1]
                     if (pattern.matcher(fileName).matches()) {
                         retval.add(resourceName)
                     }

@@ -3,7 +3,6 @@ package com.commercehub.dbratchet.filestore
 import com.commercehub.dbratchet.util.ClasspathUtil
 import com.commercehub.dbratchet.util.FileUtil
 
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
