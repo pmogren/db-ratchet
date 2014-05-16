@@ -35,12 +35,8 @@ class ClasspathFileStore implements FileStore {
     List<String> scanRecursivelyForFiles(String path, String filePattern) {
         def list = [] as Queue<String>
         Pattern fileNamePattern = FileUtil.convertWildcardToRegex(filePattern)
-        Pattern searchPattern = Pattern.compile("${path}/.*${fileNamePattern.pattern()}")
-        ClasspathUtil.getResources(searchPattern).each { resource ->
-            Matcher m = fileNamePattern.matcher(resource)
-            if (m.matches()) {
-                list << m.group()
-            }
+        ClasspathUtil.getResources(path, fileNamePattern).each { resource ->
+            list << new File(resource).name
         }
         return list
     }

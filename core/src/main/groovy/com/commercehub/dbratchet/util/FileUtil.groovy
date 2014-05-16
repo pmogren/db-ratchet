@@ -7,6 +7,9 @@ import java.util.regex.Pattern
  */
 class FileUtil {
     static Pattern convertWildcardToRegex(String pattern) {
-        return Pattern.compile(pattern.replaceAll(/\*/, '.*').replaceAll(/\?/, '.'))
+        return Pattern.compile(pattern.replaceAll(/\//, '\\/')
+                                      .replaceAll(/\./, '\\.')
+                                      .replaceAll(/\*/, '.*')
+                                      .replaceAll(/\?/, '.'))
     }
 }
