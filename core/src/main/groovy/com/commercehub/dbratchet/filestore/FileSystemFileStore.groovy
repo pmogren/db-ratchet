@@ -50,4 +50,9 @@ class FileSystemFileStore implements FileStore {
 
         return list
     }
+
+    @Override
+    String getFileStoreRootURLAsString() {
+        return "filesystem:${getFile('.').path}/"
+    }
 }

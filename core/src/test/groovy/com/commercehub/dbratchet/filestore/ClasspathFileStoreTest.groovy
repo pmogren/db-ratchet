@@ -7,7 +7,7 @@ import com.commercehub.dbratchet.util.FileUtil
  * Created by jgelais on 5/16/2014.
  */
 class ClasspathFileStoreTest extends GroovyTestCase {
-    static final String RESOURCE_BASE = '/com/commercehub/dbratchet/filestore'
+    static final String RESOURCE_BASE = 'com/commercehub/dbratchet/filestore'
     static final String TEST_RESOURCE = 'test-resource.txt'
     static final String TEST_RESOURCE_CONTENT = 'This is some text.'
 
@@ -53,7 +53,7 @@ class ClasspathFileStoreTest extends GroovyTestCase {
         assert list.contains('test-resource1.txt')
         assert list.contains('test-resource2.txt')
 
-        assert !filestore.scanRecursivelyForFiles('/com/googlecode/flyway/core', 'Flyway.class').isEmpty()
+        assert !filestore.scanRecursivelyForFiles('com/googlecode/flyway/core', 'Flyway.class').isEmpty()
     }
 
     void testThatIUnderstandRegex() {

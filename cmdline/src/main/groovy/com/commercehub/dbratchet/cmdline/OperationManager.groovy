@@ -289,7 +289,7 @@ class OperationManager {
     }
 
     private final processMigrateCli = { def options ->
-        return new MigrateOperation(getDBConfigFromCmdLineOptions(options))
+        return new MigrateOperation(getDBConfigFromCmdLineOptions(options), new FileSystemFileStore())
     }
 
     private final processStoreCli = { def options ->

@@ -1,5 +1,7 @@
 package com.commercehub.dbratchet.data
 
+import com.commercehub.dbratchet.filestore.FileStore
+
 /**
  * Created with IntelliJ IDEA.
  * User: jgelais
@@ -17,12 +19,11 @@ class DataPackageConfig {
         return load(false)
     }
 
-    static DataPackageConfig load(boolean isDataOnClasspath) {
+    static DataPackageConfig load(FileStore fileStore) {
         DataPackageConfig dataPackageConfig = new DataPackageConfig()
-        def xmlConfig = new XmlSlurper().parse(getDataPackageFile(isDataOnClasspath))
+        def xmlConfig = new XmlSlurper().parse(fileStore.getFileInputStream('data/data-packages.xml'))
         xmlConfig.package.each { packageElement->
-            DataPackage dataPackage = new DataPackage()
-            dataPackage.isOnClassPath = isDataOnClasspath
+            DataPackage dataPackage = new DataPackage(fileStore)
             if (packageElement.@name.size() > 0) {
                 dataPackage.setName(packageElement.@name.text())
             }
@@ -41,14 +42,5 @@ class DataPackageConfig {
             dataPackageConfig.add(dataPackage)
         }
         return dataPackageConfig
-    }
-
-    static getDataPackageFile(boolean isDataOnClasspath) {
-        if (isDataOnClasspath) {
-            return DataPackageConfig.getResourceAsStream('/data/data-packages.xml')
-        }
-
-        new File('./data/packages').mkdir()
-        return new File('./data/data-packages.xml')
     }
 }

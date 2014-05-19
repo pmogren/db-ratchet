@@ -68,7 +68,7 @@ class CaptureOperation implements Operation {
         dataPackage.tables.each { tableName->
             partialDataSet.addTable("${tableName}", "SELECT * FROM ${tableName}")
         }
-        FlatXmlDataSet.write(partialDataSet, new FileOutputStream(dataPackage.dataFile))
+        FlatXmlDataSet.write(partialDataSet, dataPackage.dataOutputStream)
     }
 
     private IDatabaseConnection getDatabaseConnection() {

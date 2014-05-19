@@ -1,6 +1,7 @@
 package com.commercehub.dbratchet.util
 
 import com.commercehub.dbratchet.DatabaseConfig
+import com.commercehub.dbratchet.schema.DatabaseOperationServiceFactory
 import groovy.sql.Sql
 
 /**
@@ -11,10 +12,6 @@ import groovy.sql.Sql
  */
 @SuppressWarnings('CatchException')
 class GroovySqlRunner implements SqlRunner {
-    public static final String JDBC_DRIVER_CLASS = 'net.sourceforge.jtds.jdbc.Driver'
-    static {
-        ClassLoader.systemClassLoader.loadClass(JDBC_DRIVER_CLASS)
-    }
 
     @Override
     boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
@@ -59,13 +56,18 @@ class GroovySqlRunner implements SqlRunner {
 
     static Sql getSql(DatabaseConfig dbConfig) {
         if (dbConfig.user) {
-            return Sql.newInstance(dbConfig.jdbcUrl, dbConfig.user, dbConfig.password, JDBC_DRIVER_CLASS)
+            return Sql.newInstance(dbConfig.jdbcUrl, dbConfig.user, dbConfig.password,
+                    getJdbcDriverForVendor(dbConfig.vendor))
         }
 
-        return Sql.newInstance(dbConfig.jdbcUrl, JDBC_DRIVER_CLASS)
+        return Sql.newInstance(dbConfig.jdbcUrl, getJdbcDriverForVendor(dbConfig.vendor))
     }
 
-   def parseScriptIntoTransactions(File sqlFile) {
+    static String getJdbcDriverForVendor(String vendor) {
+        return DatabaseOperationServiceFactory.getDatabaseOperationService(vendor).driverClass
+    }
+
+    def parseScriptIntoTransactions(File sqlFile) {
         def commandList = []
         String currentCommand = ''
         sqlFile.eachLine { line->
@@ -79,4 +81,5 @@ class GroovySqlRunner implements SqlRunner {
 
         return commandList
     }
+
 }

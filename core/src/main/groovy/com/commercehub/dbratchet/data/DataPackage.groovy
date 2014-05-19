@@ -1,5 +1,7 @@
 package com.commercehub.dbratchet.data
 
+import com.commercehub.dbratchet.filestore.FileStore
+
 /**
  * Created with IntelliJ IDEA.
  * User: jgelais
@@ -8,13 +10,18 @@ package com.commercehub.dbratchet.data
  */
 class DataPackage {
     String name
-    boolean isOnClassPath
     List<String> tables = [] as Queue<String>
+    private final FileStore fileStore
 
-    def getDataFile() {
-        if (isOnClassPath) {
-            return DataPackage.getResourceAsStream("/data/packages/${name}.xml")
-        }
-        return new File('./data/packages', "${name}.xml")
+    DataPackage(FileStore fileStore) {
+        this.fileStore = fileStore
+    }
+
+    OutputStream getDataOutputStream() {
+        return fileStore.getFileOutputStream("data/packages/${name}.xml")
+    }
+
+    InputStream getDataInputStream() {
+        return fileStore.getFileInputStream("data/packages/${name}.xml")
     }
 }

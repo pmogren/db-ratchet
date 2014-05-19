@@ -9,9 +9,19 @@ import java.util.regex.Pattern
  * Created by jgelais on 5/15/2014.
  */
 class ClasspathFileStore implements FileStore {
+    String rootPath
+
+    ClasspathFileStore() {
+        this('/')
+    }
+
+    ClasspathFileStore(String rootPath) {
+        this.rootPath = rootPath
+    }
+
     @Override
     InputStream getFileInputStream(String path) {
-        return ClasspathFileStore.getResourceAsStream(path)
+        return ClasspathFileStore.getResourceAsStream("${rootPath}${path}")
     }
 
     @Override
@@ -21,7 +31,7 @@ class ClasspathFileStore implements FileStore {
 
     @Override
     URL getFileAsResource(String path) {
-        return ClasspathFileStore.getResource(path)
+        return ClasspathFileStore.getResource("${rootPath}${path}")
     }
 
     @Override
@@ -29,14 +39,18 @@ class ClasspathFileStore implements FileStore {
         throw new UnsupportedOperationException('Cannot return a File reference for resources on classpath')
     }
 
-    // TODO Write a Unit test for this
     @Override
     List<String> scanRecursivelyForFiles(String path, String filePattern) {
         def list = [] as Queue<String>
         Pattern fileNamePattern = FileUtil.convertWildcardToRegex(filePattern)
-        ClasspathUtil.getResources(path, fileNamePattern).each { resource ->
+        ClasspathUtil.getResources("${rootPath}${path}", fileNamePattern).each { resource ->
             list << new File(resource).name
         }
         return list
+    }
+
+    @Override
+    String getFileStoreRootURLAsString() {
+        return "classpath:${rootPath}"
     }
 }

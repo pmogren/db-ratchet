@@ -2,6 +2,7 @@ package com.commercehub.dbratchet
 
 import com.commercehub.dbratchet.data.DataPackage
 import com.commercehub.dbratchet.data.DataPackageConfig
+import com.commercehub.dbratchet.filestore.FileStore
 import com.commercehub.dbratchet.util.GroovySqlRunner
 import groovy.sql.Sql
 
@@ -15,16 +16,17 @@ class MigrateOperation implements Operation {
     final String name = 'Migrate'
 
     DatabaseConfig dbConfig
-    boolean isDataOnClasspath = false
+    FileStore fileStore
 
-    MigrateOperation(DatabaseConfig dbConfig) {
+    MigrateOperation(DatabaseConfig dbConfig, FileStore fileStore) {
         this.dbConfig = dbConfig
+        this.fileStore = fileStore
     }
 
     @Override
     boolean run() {
         Date startTime = new Date()
-        DataPackageConfig dataPackageConfig = DataPackageConfig.load(isDataOnClasspath)
+        DataPackageConfig dataPackageConfig = DataPackageConfig.load(fileStore)
         dataPackageConfig.packages.each  { dataPackage->
             migratePackage(dataPackage)
         }
@@ -162,7 +164,7 @@ class MigrateOperation implements Operation {
     }
 
     private void loadTempTables(DataPackage dataPackage, Map<String, String> tableToTempTableMap, Sql sql) {
-        def dataset = new XmlSlurper().parse(dataPackage.dataFile)
+        def dataset = new XmlSlurper().parse(dataPackage.dataInputStream)
         dataPackage.tables.each { table->
             if (dataset."${table}".size() > 0) {
                 def sampleRow = dataset."${table}"[(0)]

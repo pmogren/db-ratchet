@@ -9,4 +9,5 @@ interface FileStore {
     URL getFileAsResource(String path)
     File getFile(String path)
     List<String> scanRecursivelyForFiles(String path, String filePattern)
+    String getFileStoreRootURLAsString()
 }

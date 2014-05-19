@@ -25,12 +25,19 @@ class SchemaConfig {
         fileStore.getFile('.')
     }
 
+    String getSchemaURLAsString() {
+        return "${fileStore.fileStoreRootURLAsString}${Version.VERSIONS_DIR}"
+    }
+
     private List<Version> scanSchemaRootForPublishedVersions() {
+        List<Version> returnList = [] as Queue<Version>
         fileStore.scanRecursivelyForFiles(Version.VERSIONS_DIR,
-                "${FLYWAY_MIGRATION_PREFIX}*${FLYWAY_MIGRATION_SUFFIX}").each { fileMatch->
-            def versionString = fileMatch.filename[1..(resource.filename.indexOf(FLYWAY_MIGRATION_SUFFIX) - 1)]
-            versions.add(new Version(versionString))
+                "${FLYWAY_MIGRATION_PREFIX}*${FLYWAY_MIGRATION_SUFFIX}").each { filename->
+            def versionString = filename[1..(filename.indexOf(FLYWAY_MIGRATION_SUFFIX) - 1)]
+            returnList.add(new Version(versionString))
         }
+
+        return returnList
     }
 
     Version getVersion() {
