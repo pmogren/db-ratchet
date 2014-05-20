@@ -16,7 +16,9 @@ class FileSystemFileStore implements FileStore {
 
     @Override
     OutputStream getFileOutputStream(String path) {
-        return getFile(path).newDataOutputStream()
+        File file = getFile(path)
+        ensureFileExistence(file)
+        return file.newDataOutputStream()
     }
 
     @Override
@@ -54,5 +56,15 @@ class FileSystemFileStore implements FileStore {
     @Override
     String getFileStoreRootURLAsString() {
         return "filesystem:${getFile('.').path}/"
+    }
+
+    private void ensureFileExistence(File file) {
+        if (!file.exists()) {
+            File parentDir = file.parentFile
+            if (!parentDir.exists()) {
+                parentDir.mkdirs()
+            }
+            file.createNewFile()
+        }
     }
 }

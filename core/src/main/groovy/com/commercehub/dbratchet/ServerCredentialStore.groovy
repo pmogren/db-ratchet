@@ -63,10 +63,19 @@ class ServerCredentialStore {
     }
 
     private File getCredentialStoreFile() {
-        return new File(schemaConfig.rootDir, CRED_STORE_FILE_NAME)
+        return schemaConfig.fileStore.getFile(CRED_STORE_FILE_NAME)
     }
 
     DatabaseConfig get(String alias) {
         return credentials.get(alias)
+    }
+
+    @Override
+    String toString() {
+        String str = ''
+        credentials.keySet().sort().each { key ->
+            str += "${key}: {${credentials.get(key)}\n"
+        }
+        return str
     }
 }

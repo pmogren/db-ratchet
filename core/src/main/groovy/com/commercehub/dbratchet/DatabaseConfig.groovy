@@ -71,4 +71,9 @@ class DatabaseConfig implements Cloneable {
                         .setUser(user)
                         .setPassword(password)
     }
+
+    @Override
+    String toString() {
+        return "server: $server | vendor: $vendor | database: $database | user: $user | password: $password"
+    }
 }
