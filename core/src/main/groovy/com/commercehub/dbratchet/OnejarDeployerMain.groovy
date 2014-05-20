@@ -40,8 +40,7 @@ class OnejarDeployerMain {
     }
 
     void migrate() {
-        Operation migrateOp = new MigrateOperation(dbConfig)
-        migrateOp.isDataOnClasspath = true
+        Operation migrateOp = new MigrateOperation(dbConfig, new ClasspathFileStore())
         migrateOp.run()
     }
 

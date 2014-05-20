@@ -34,6 +34,8 @@ class BuildOperation implements Operation {
     boolean run() {
         version = version ?: schemaConfig.version
 
+        println "Migrating Schema to Version: $version"
+
         boolean returnVal = true
 
         if (!DatabaseOperationServiceFactory.getDatabaseOperationService(dbConfig.vendor)

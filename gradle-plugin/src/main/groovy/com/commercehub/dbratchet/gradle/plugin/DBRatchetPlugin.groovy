@@ -43,7 +43,7 @@ class DBRatchetPlugin implements Plugin<Project> {
         Jar packageTask = project.tasks.getByName(PACKAGE_TASK_NAME)
         packageTask.dependsOn project.configurations.dbRatchet
         packageTask.classifier = 'db-ratchet'
-        packageTask.inputs.files([new File(project.rootDir, VERSIONS_DIR), new File(project.rootDir, DATA_DIR)])
+        packageTask.inputs.files([new File(project.projectDir, VERSIONS_DIR), new File(project.projectDir, DATA_DIR)])
         packageTask.manifest {
             attributes('Main-Class': 'com.commercehub.dbratchet.OnejarDeployerMain')
         }
@@ -59,10 +59,10 @@ class DBRatchetPlugin implements Plugin<Project> {
                 exclude 'META-INF/NOTICE'
             }
             packageTask.into(VERSIONS_DIR) {
-                from "${project.rootDir}/${VERSIONS_DIR}"
+                from "${project.projectDir}/${VERSIONS_DIR}"
             }
             packageTask.into(DATA_DIR) {
-                from "${project.rootDir}/${DATA_DIR}"
+                from "${project.projectDir}/${DATA_DIR}"
             }
         }
 

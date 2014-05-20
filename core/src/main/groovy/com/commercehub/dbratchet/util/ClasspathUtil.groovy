@@ -52,7 +52,7 @@ class ClasspathUtil {
                 String resourceName = "/${ze.name}"
                 if (resourceName.contains("$path/") && resourceName.length() > path.length() + 1) {
                     String fileName = resourceName[path.length() + 1..-1]
-                    if (pattern.matcher(fileName).matches()) {
+                    if (pattern.matcher(fileName).find()) {
                         retval.add(resourceName)
                     }
                 }
