@@ -37,7 +37,7 @@ class SchemaConfig {
             returnList.add(new Version(versionString))
         }
 
-        return returnList
+        return returnList.sort()
     }
 
     Version getVersion() {
