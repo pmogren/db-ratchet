@@ -2,6 +2,7 @@ package com.commercehub.dbratchet
 
 import com.commercehub.dbratchet.data.DataPackage
 import com.commercehub.dbratchet.data.DataPackageConfig
+import com.commercehub.dbratchet.filestore.FileStore
 import com.commercehub.dbratchet.util.GroovySqlRunner
 import org.dbunit.database.DatabaseConnection
 import org.dbunit.database.IDatabaseConnection
@@ -24,15 +25,17 @@ class CaptureOperation implements Operation {
     final String name = 'Capture'
 
     DatabaseConfig dbConfig
+    FileStore fileStore
 
-    CaptureOperation(DatabaseConfig dbConfig) {
+    CaptureOperation(DatabaseConfig dbConfig, FileStore fileStore) {
         this.dbConfig = dbConfig
+        this.fileStore = fileStore
     }
 
     @Override
     boolean run() {
         silenceDbUnitLogger()
-        DataPackageConfig dataPackageConfig = DataPackageConfig.load()
+        DataPackageConfig dataPackageConfig = DataPackageConfig.load(fileStore)
         dataPackageConfig.packages.each { dataPackage->
             capturePackage(dataPackage)
         }

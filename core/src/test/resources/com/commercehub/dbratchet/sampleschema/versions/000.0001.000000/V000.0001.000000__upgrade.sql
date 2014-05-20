@@ -1,6 +1,6 @@
 create schema dbo;
 
-create table "dbo"."Courses" (
+create table dbo.Courses (
     courseId int not null,
     name varchar(255) not null,
     yearOffered int not null,

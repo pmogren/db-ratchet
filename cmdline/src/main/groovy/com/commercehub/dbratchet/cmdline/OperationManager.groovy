@@ -285,7 +285,7 @@ class OperationManager {
     }
 
     private final processCaptureCli = { def options ->
-        return new CaptureOperation(getDBConfigFromCmdLineOptions(options))
+        return new CaptureOperation(getDBConfigFromCmdLineOptions(options), schemaConfig.fileStore)
     }
 
     private final processMigrateCli = { def options ->

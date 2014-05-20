@@ -18,11 +18,11 @@ class BuildOperationTest extends GroovyTestCase {
         assert buildOp.isConfigured()
         assert buildOp.run()
         assert DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Courses')
+                .isTableInDatabase(databaseConfig, 'DBO.COURSES')
         assert DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Students')
+                .isTableInDatabase(databaseConfig, 'DBO.STUDENTS')
         assert DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Enrollment')
+                .isTableInDatabase(databaseConfig, 'DBO.ENROLLMENT')
     }
 
     void testMigrationToSpecificVersion() {
@@ -31,22 +31,22 @@ class BuildOperationTest extends GroovyTestCase {
                 new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema/')))
         assert buildOp.run()
         assert DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Courses')
+                .isTableInDatabase(databaseConfig, 'DBO.COURSES')
         assert !DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Students')
+                .isTableInDatabase(databaseConfig, 'DBO.STUDENTS')
         assert !DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Enrollment')
+                .isTableInDatabase(databaseConfig, 'DBO.ENROLLMENT')
 
         // Now apply the final version
         buildOp = new BuildOperation(databaseConfig, new Version(0,1,1),
                 new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema/')))
         assert buildOp.run()
         assert DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Courses')
+                .isTableInDatabase(databaseConfig, 'DBO.COURSES')
         assert DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Students')
+                .isTableInDatabase(databaseConfig, 'DBO.STUDENTS')
         assert DatabaseOperationServiceFactory.getDatabaseOperationService(databaseConfig.vendor)
-                .isTableInDatabase(databaseConfig, 'dbo.Enrollment')
+                .isTableInDatabase(databaseConfig, 'DBO.ENROLLMENT')
     }
 
     void testSafetyCheck() {
