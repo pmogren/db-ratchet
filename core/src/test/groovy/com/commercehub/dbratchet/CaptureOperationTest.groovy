@@ -21,8 +21,29 @@ class CaptureOperationTest extends GroovyTestCase {
         CaptureOperation captureOp = new CaptureOperation(databaseConfig, fileStore)
         assert captureOp.run()
 
-        // TODO write some xpath assertions
-        println fileStore.getFileInputStream('data/packages/dbo.Courses.xml').text
+        def dataset = new XmlSlurper().parse(fileStore.getFileInputStream('data/packages/dbo.Courses.xml'))
+        assert dataset.'dbo.Courses'.size() == 3
+
+        def course1 = dataset.'dbo.Courses'.find {
+            it.@COURSEID == '1'
+        } [0]
+        assert course1.attributes().get('NAME') == 'Biology 101'
+        assert course1.attributes().get('YEAROFFERED') == '2013'
+        assert course1.attributes().get('SEMESTER') == 'F'
+
+        def course2 = dataset.'dbo.Courses'.find {
+            it.@COURSEID == '2'
+        } [0]
+        assert course2.attributes().get('NAME') == 'Biology 101'
+        assert course2.attributes().get('YEAROFFERED') == '2014'
+        assert course2.attributes().get('SEMESTER') == 'S'
+
+        def course3 = dataset.'dbo.Courses'.find {
+            it.@COURSEID == '3'
+        } [0]
+        assert course3.attributes().get('NAME') == 'Chemistry 101'
+        assert course3.attributes().get('YEAROFFERED') == '2013'
+        assert course3.attributes().get('SEMESTER') == 'F'
     }
 
     private void storeSampleDataConfig(MockInMemoryFileStore mockInMemoryFileStore) {
