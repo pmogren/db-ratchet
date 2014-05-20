@@ -7,21 +7,7 @@ package com.commercehub.dbratchet.util
  * Time: 1:06 PM
  */
 class SqlRunnerFactory {
-    boolean isSqlCmdAvailable
-
-    SqlRunnerFactory() {
-        isSqlCmdAvailable = checkForSqlCmd()
-    }
-
     SqlRunner getSqlRunner() {
-        if (isSqlCmdAvailable) {
-            return new SqlCmdSqlRunner()
-        }
-
         return new GroovySqlRunner()
-    }
-
-    private boolean checkForSqlCmd() {
-        return new Cmd('sqlcmd /?', false).run()
     }
 }

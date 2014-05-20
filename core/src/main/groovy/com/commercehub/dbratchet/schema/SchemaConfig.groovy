@@ -10,6 +10,7 @@ import com.commercehub.dbratchet.filestore.FileStore
  */
 class SchemaConfig {
     public static final String DATA_DIR = 'data'
+    public static final String SCRIPTS_DIR = 'scripts'
     public static final String FLYWAY_MIGRATION_SUFFIX = '__upgrade.sql'
     public static final String FLYWAY_MIGRATION_PREFIX = 'V'
 

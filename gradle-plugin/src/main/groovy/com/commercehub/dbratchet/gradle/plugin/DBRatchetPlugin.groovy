@@ -17,6 +17,7 @@ class DBRatchetPlugin implements Plugin<Project> {
     public static final String DB_RATCHET_CONFIGURATION_NAME = 'dbRatchet'
     public static final String VERSIONS_DIR = 'versions'
     public static final String DATA_DIR = 'data'
+    public static final String SCRIPTS_DIR = 'scripts'
 
     @Override
     void apply(Project project) {
@@ -43,7 +44,9 @@ class DBRatchetPlugin implements Plugin<Project> {
         Jar packageTask = project.tasks.getByName(PACKAGE_TASK_NAME)
         packageTask.dependsOn project.configurations.dbRatchet
         packageTask.classifier = 'db-ratchet'
-        packageTask.inputs.files([new File(project.projectDir, VERSIONS_DIR), new File(project.projectDir, DATA_DIR)])
+        packageTask.inputs.files([new File(project.projectDir, VERSIONS_DIR),
+                                  new File(project.projectDir, DATA_DIR),
+                                  new File(project.projectDir, SCRIPTS_DIR)])
         packageTask.manifest {
             attributes('Main-Class': 'com.commercehub.dbratchet.OnejarDeployerMain')
         }
@@ -63,6 +66,9 @@ class DBRatchetPlugin implements Plugin<Project> {
             }
             packageTask.into(DATA_DIR) {
                 from "${project.projectDir}/${DATA_DIR}"
+            }
+            packageTask.into(SCRIPTS_DIR) {
+                from "${project.projectDir}/${SCRIPTS_DIR}"
             }
         }
 

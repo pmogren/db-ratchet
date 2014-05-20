@@ -15,13 +15,23 @@ class GroovySqlRunner implements SqlRunner {
 
     @Override
     boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
+        runScript(dbConfig, scriptFile.newInputStream())
+    }
+
+    @Override
+    boolean runScript(DatabaseConfig dbConfig, String scriptFilePath) {
+        runScript(dbConfig, new File(scriptFilePath))
+    }
+
+    @Override
+    boolean runScript(DatabaseConfig dbConfig, InputStream scriptContents) {
         Sql sql = getSql(dbConfig)
         try {
-            parseScriptIntoTransactions(scriptFile).each { sqlString->
+            parseScriptIntoTransactions(scriptContents).each { sqlString->
                 sql.execute(sqlString)
             }
         } catch (Exception e) {
-            System.err.println "Error running SQL Script: ${scriptFile}"
+            System.err.println 'Error running SQL Script'
             System.err.println 'Because SQL scripts can manage their own transactions,' +
                     ' this script may have been partially applied.'
             e.printStackTrace()
@@ -31,11 +41,6 @@ class GroovySqlRunner implements SqlRunner {
         }
 
         return true
-    }
-
-    @Override
-    boolean runScript(DatabaseConfig dbConfig, String scriptFilePath) {
-        runScript(dbConfig, new File(scriptFilePath))
     }
 
     @Override
@@ -67,16 +72,20 @@ class GroovySqlRunner implements SqlRunner {
         return DatabaseOperationServiceFactory.getDatabaseOperationService(vendor).driverClass
     }
 
-    def parseScriptIntoTransactions(File sqlFile) {
+    def parseScriptIntoTransactions(InputStream sql) {
         def commandList = []
         String currentCommand = ''
-        sqlFile.eachLine { line->
+        sql.eachLine { line->
             if ('GO' == (line)) {
                 commandList.add(currentCommand)
                 currentCommand = ''
             } else {
                 currentCommand = "${currentCommand}${line}\n"
             }
+        }
+
+        if (!currentCommand.isEmpty()) {
+            commandList.add(currentCommand)
         }
 
         return commandList

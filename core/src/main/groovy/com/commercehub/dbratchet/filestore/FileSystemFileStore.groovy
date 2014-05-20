@@ -45,8 +45,8 @@ class FileSystemFileStore implements FileStore {
         }
         Pattern pattern = FileUtil.convertWildcardToRegex(filePattern)
         rootDir.eachFileRecurse(FileType.FILES) { file->
-            if (pattern.matcher(file.path).matches()) {
-                list << file.path
+            if (pattern.matcher(file.name).matches()) {
+                list << file.name
             }
         }
 

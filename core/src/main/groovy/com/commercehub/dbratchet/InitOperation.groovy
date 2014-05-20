@@ -13,6 +13,8 @@ import com.commercehub.dbratchet.schema.Version
  * Time: 3:06 PM
  */
 class InitOperation implements Operation {
+    public static final String POST_CREATE_SCRIPT_TEMPLATE = '-- Add to ths script any commands you wish' +
+                                                             ' to be run after DB-Ratchet creates a new database.'
     final String name = 'Init'
 
     private final SchemaConfig schemaConfig
@@ -28,8 +30,17 @@ class InitOperation implements Operation {
         boolean returnVal = initSchemaStore()
         mkdir(Version.VERSIONS_DIR)
         mkdir(SchemaConfig.DATA_DIR)
+        mkdir(SchemaConfig.SCRIPTS_DIR)
+
         generateDataPackagesXml()
+        generatePostCreateScriptTemplate()
         return returnVal
+    }
+
+    void generatePostCreateScriptTemplate() {
+        File postCreateSql = new File(SchemaConfig.SCRIPTS_DIR, 'post-create.sql')
+        postCreateSql.createNewFile()
+        postCreateSql.text = POST_CREATE_SCRIPT_TEMPLATE
     }
 
     @Override
@@ -48,7 +59,7 @@ class InitOperation implements Operation {
         return true
     }
 
-    boolean generateDataPackagesXml() {
+    void generateDataPackagesXml() {
         File destFile = new File(SchemaConfig.DATA_DIR, 'data-packages.xml')
         destFile.createNewFile()
 

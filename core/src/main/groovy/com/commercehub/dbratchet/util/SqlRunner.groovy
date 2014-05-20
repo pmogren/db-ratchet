@@ -11,5 +11,6 @@ import com.commercehub.dbratchet.DatabaseConfig
 interface SqlRunner {
     boolean runScript(DatabaseConfig dbConfig, File scriptFile)
     boolean runScript(DatabaseConfig dbConfig, String scriptFilePath)
+    boolean runScript(DatabaseConfig dbConfig, InputStream scriptContents)
     boolean runCommand(DatabaseConfig dbConfig, String sqlString)
 }

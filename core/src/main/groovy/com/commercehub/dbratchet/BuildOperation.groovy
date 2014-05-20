@@ -41,6 +41,10 @@ class BuildOperation implements Operation {
         if (!DatabaseOperationServiceFactory.getDatabaseOperationService(dbConfig.vendor)
                 .doesDatabaseExist(dbConfigWithoutDbName, dbConfig.database)) {
             returnVal &= sqlRunner.runCommand(dbConfigWithoutDbName, "create database ${dbConfig.database}")
+            InputStream is = schemaConfig.fileStore.getFileInputStream("${SchemaConfig.SCRIPTS_DIR}/post-create.sql")
+            if (is) {
+                sqlRunner.runScript(dbConfig, is)
+            }
         }
 
         if (isSafeToMigrate()) {
