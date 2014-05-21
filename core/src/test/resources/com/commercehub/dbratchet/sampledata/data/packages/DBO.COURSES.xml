@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <DBO.COURSES COURSEID="1" NAME="Biology 101" YEAROFFERED="2013" SEMESTER="F"/>
+    <DBO.COURSES COURSEID="2" NAME="Biology 101" YEAROFFERED="2014" SEMESTER="S"/>
+    <DBO.COURSES COURSEID="3" NAME="Chemistry 101" YEAROFFERED="2013" SEMESTER="F"/>
+</dataset>
