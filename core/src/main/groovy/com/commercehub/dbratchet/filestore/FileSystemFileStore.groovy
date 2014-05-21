@@ -22,11 +22,6 @@ class FileSystemFileStore implements FileStore {
     }
 
     @Override
-    URL getFileAsResource(String path) {
-        return getFile(path).toURI().toURL()
-    }
-
-    @Override
     File getFile(String path) {
         return new File(path)
     }

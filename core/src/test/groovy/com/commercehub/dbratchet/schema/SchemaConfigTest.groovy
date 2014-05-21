@@ -7,12 +7,14 @@ import com.commercehub.dbratchet.filestore.FileStore
  * Created by jgelais on 5/19/2014.
  */
 class SchemaConfigTest extends GroovyTestCase {
+    public static final String CLASS_PATH_ROOT = '/com/commercehub/dbratchet/sampleschema/'
+
     SchemaConfig schemaConfig
 
     @Override
     void setUp() {
         super.setUp()
-        schemaConfig = new SchemaConfig(new MockFileStore())
+        schemaConfig = new SchemaConfig(new ClasspathFileStore(CLASS_PATH_ROOT))
     }
 
     @Override
@@ -21,28 +23,24 @@ class SchemaConfigTest extends GroovyTestCase {
         schemaConfig = null
     }
 
-    void testGetRootDir() {
-        assert schemaConfig.rootDir == new File('.')
-    }
-
     void testGetSchemaURLAsString() {
-        assert schemaConfig.schemaURLAsString == "classpath:${MockFileStore.CLASS_PATH_ROOT}${Version.VERSIONS_DIR}"
+        assert schemaConfig.schemaURLAsString == "classpath:${CLASS_PATH_ROOT}${Version.VERSIONS_DIR}"
     }
 
     void testGetVersion() {
-        assert schemaConfig.version == new Version('0.2.0')
+        assert schemaConfig.version == new Version('0.1.1')
     }
 
     void testGetPreviousVersion() {
-        assert schemaConfig.previousVersion == new Version('0.1.1')
+        assert schemaConfig.previousVersion == new Version('0.1.0')
     }
 
     void testGetNextPointVersion() {
-        assert schemaConfig.nextPointVersion == new Version('0.2.1')
+        assert schemaConfig.nextPointVersion == new Version('0.1.2')
     }
 
     void testGetNextMinorVersion() {
-        assert schemaConfig.nextMinorVersion == new Version('0.3.0')
+        assert schemaConfig.nextMinorVersion == new Version('0.2.0')
     }
 
     void testGetNextMajorVersion() {
@@ -50,19 +48,13 @@ class SchemaConfigTest extends GroovyTestCase {
     }
 
     void testGetFileStore() {
-        assert schemaConfig.fileStore instanceof MockFileStore
-    }
-
-    void testSetFileStore() {
-        schemaConfig.setFileStore(new ClasspathFileStore())
         assert schemaConfig.fileStore instanceof ClasspathFileStore
     }
 
     void testGetVersions() {
-        assert schemaConfig.versions.size() == 3
+        assert schemaConfig.versions.size() == 2
         assert schemaConfig.versions.contains(new Version('0.1.0'))
         assert schemaConfig.versions.contains(new Version('0.1.1'))
-        assert schemaConfig.versions.contains(new Version('0.2.0'))
     }
 
     void testSetVersions() {
@@ -79,42 +71,5 @@ class SchemaConfigTest extends GroovyTestCase {
     void testBehaviourWhenThereIsNoPreviousVersion() {
         schemaConfig.setVersions([new Version('0.0.1')])
         assert schemaConfig.previousVersion == null
-    }
-
-    static class MockFileStore implements FileStore {
-        public static final String CLASS_PATH_ROOT = '/com/commercehub/dbratchet/schema/schemaconfigtest/'
-
-        @Override
-        InputStream getFileInputStream(String path) {
-            return MockFileStore.getResourceAsStream("${CLASS_PATH_ROOT}$path")
-        }
-
-        @Override
-        OutputStream getFileOutputStream(String path) {
-            return getFile(path).newOutputStream()
-        }
-
-        @Override
-        URL getFileAsResource(String path) {
-            return MockFileStore.getResource("${CLASS_PATH_ROOT}$path")
-        }
-
-        @Override
-        File getFile(String path) {
-            if (path == '.') {
-                return new File('.')
-            }
-            return new File(getFileAsResource(path).toURI())
-        }
-
-        @Override
-        List<String> scanRecursivelyForFiles(String path, String filePattern) {
-            return ['V000.0001.000000__upgrade.sql', 'V000.0001.000001__upgrade.sql', 'V000.0002.000000__upgrade.sql']
-        }
-
-        @Override
-        String getFileStoreRootURLAsString() {
-            return "classpath:${CLASS_PATH_ROOT}"
-        }
     }
 }

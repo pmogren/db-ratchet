@@ -28,12 +28,6 @@ class ClasspathFileStoreTest extends GroovyTestCase {
         }
     }
 
-    void testGetFileAsResource() {
-        FileStore filestore = new ClasspathFileStore()
-        String text = filestore.getFileAsResource("${RESOURCE_BASE}/${TEST_RESOURCE}").openStream().text
-        assert TEST_RESOURCE_CONTENT == text
-    }
-
     @SuppressWarnings('CatchException')
     void testGetFile() {
         FileStore filestore = new ClasspathFileStore()

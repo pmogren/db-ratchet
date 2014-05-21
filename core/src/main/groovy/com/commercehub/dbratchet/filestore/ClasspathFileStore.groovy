@@ -30,11 +30,6 @@ class ClasspathFileStore implements FileStore {
     }
 
     @Override
-    URL getFileAsResource(String path) {
-        return ClasspathFileStore.getResource("${rootPath}${path}")
-    }
-
-    @Override
     File getFile(String path) {
         throw new UnsupportedOperationException('Cannot return a File reference for resources on classpath')
     }
