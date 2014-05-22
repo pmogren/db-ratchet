@@ -133,5 +133,10 @@ def serTree = fileTree(dir: '.').matching {include '**/*.ser'}
 cobertura {
     coverageFormats = [ 'xml', 'html' ]
     coverageMergeDatafiles = serTree.files as List
+    coverageSourceDirs = [
+            project(':db-ratchet-cmdline').sourceSets.main.groovy.srcDirs,
+            project(':db-ratchet-core').sourceSets.main.groovy.srcDirs,
+            project(':db-ratchet-gradle-plugin').sourceSets.main.groovy.srcDirs
+    ]
 }
 test.dependsOn(subprojects.test)
