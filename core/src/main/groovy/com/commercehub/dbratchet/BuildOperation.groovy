@@ -1,5 +1,6 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.databases.DatabaseClient
 import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.SchemaMigrator
@@ -16,13 +17,11 @@ class BuildOperation implements Operation {
     final String name = 'Build'
 
     DatabaseConfig dbConfig
-    DatabaseConfig dbConfigWithoutDbName
     Version version
     SchemaConfig schemaConfig
 
     BuildOperation(DatabaseConfig dbConfig, Version version, SchemaConfig schemaConfig) {
         this.dbConfig = dbConfig
-        dbConfigWithoutDbName = dbConfig.clone().setDatabase(null)
         this.version = version
         this.schemaConfig = schemaConfig
     }
@@ -35,9 +34,10 @@ class BuildOperation implements Operation {
 
         boolean returnVal = true
 
-        if (!DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).schemaInformationService
-                .doesDatabaseExist(dbConfigWithoutDbName, dbConfig.database)) {
-            returnVal &= SqlScriptRunner.runCommand(dbConfigWithoutDbName, "create database ${dbConfig.database}")
+
+        DatabaseClient databaseClient = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor)
+        if (!databaseClient.schemaInformationService.doesDatabaseExist(dbConfig)) {
+            returnVal &= databaseClient.createDatabase(dbConfig)
             InputStream is = schemaConfig.fileStore.getFileInputStream("${SchemaConfig.SCRIPTS_DIR}/post-create.sql")
             if (is) {
                 SqlScriptRunner.runScript(dbConfig, is)

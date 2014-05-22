@@ -7,9 +7,18 @@ import groovy.sql.Sql
  * Created by jaystgelais on 5/21/14.
  */
 interface DatabaseClient {
+
     String getDriverClass()
+
+    @SuppressWarnings('FactoryMethodName')
+    boolean createDatabase(DatabaseConfig databaseConfig)
+
     DataMigrator getDataMigrator()
+
     SchemaInformationService getSchemaInformationService()
+
     Sql getSql(DatabaseConfig databaseConfig)
+
     String getJdbcUrl(DatabaseConfig databaseConfig)
+
 }

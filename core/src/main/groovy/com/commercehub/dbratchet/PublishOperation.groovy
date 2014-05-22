@@ -87,9 +87,9 @@ class PublishOperation implements Operation {
             System.err.println "Unable to create database [${dbName}] on server [${dbConfig.server}]"
             return false
         }
-        DatabaseConfig dbConfigWithDatabase = dbConfig.clone().setDatabase(dbName)
+
         try {
-            comparisonAction.call(dbConfigWithDatabase)
+            comparisonAction.call(dbConfig.serverConfig)
         } finally {
             if (hasDatabaseBeenCreated) {
                 if (!dropDatabase(dbConfig, dbName)) {

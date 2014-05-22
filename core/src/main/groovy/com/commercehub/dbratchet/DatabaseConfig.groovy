@@ -56,6 +56,10 @@ class DatabaseConfig implements Cloneable {
         return this
     }
 
+    DatabaseConfig getServerConfig() {
+        return ((DatabaseConfig) clone()).setDatabase(null)
+    }
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return new DatabaseConfig()

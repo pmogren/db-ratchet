@@ -4,6 +4,7 @@ import com.commercehub.dbratchet.DatabaseConfig
 import com.commercehub.dbratchet.databases.DataMigrator
 import com.commercehub.dbratchet.databases.DatabaseClient
 import com.commercehub.dbratchet.databases.SchemaInformationService
+import com.commercehub.dbratchet.util.SqlScriptRunner
 import groovy.sql.Sql
 
 /**
@@ -16,6 +17,11 @@ class MSSQLDatabaseClient implements DatabaseClient {
     }
 
     String driverClass = JDBC_DRIVER_CLASS
+
+    @Override
+    boolean createDatabase(DatabaseConfig databaseConfig) {
+        return SqlScriptRunner.runCommand(databaseConfig.serverConfig, "create database ${databaseConfig.database}")
+    }
 
     @Override
     DataMigrator getDataMigrator() {

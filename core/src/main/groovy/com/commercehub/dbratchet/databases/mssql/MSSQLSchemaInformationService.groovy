@@ -10,9 +10,9 @@ import com.commercehub.dbratchet.databases.SchemaInformationService
 class MSSQLSchemaInformationService implements SchemaInformationService {
 
     @Override
-    boolean doesDatabaseExist(DatabaseConfig dbConfig, String dbName) {
-        return (DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
-                .rows('SELECT name FROM master.sys.databases WHERE name = ?', dbName).size() > 0)
+    boolean doesDatabaseExist(DatabaseConfig dbConfig) {
+        return (DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig.serverConfig)
+                .rows('SELECT name FROM master.sys.databases WHERE name = ?', dbConfig.database).size() > 0)
     }
 
     @Override

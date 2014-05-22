@@ -7,6 +7,8 @@ import com.commercehub.dbratchet.databases.DbUnitDataMigrator
 import com.commercehub.dbratchet.databases.SchemaInformationService
 import groovy.sql.Sql
 
+import java.sql.SQLSyntaxErrorException
+
 /**
  * Created by jaystgelais on 5/21/14.
  */
@@ -19,6 +21,12 @@ class DerbyDatabaseClient implements DatabaseClient {
     String driverClass = JDBC_DRIVER_CLASS
 
     @Override
+    boolean createDatabase(DatabaseConfig databaseConfig) {
+        // Do nothing. We always create on connection anyway.
+        return true
+    }
+
+    @Override
     DataMigrator getDataMigrator() {
         return new DbUnitDataMigrator()
     }
@@ -29,8 +37,15 @@ class DerbyDatabaseClient implements DatabaseClient {
     }
 
     @Override
+    @SuppressWarnings('EmptyCatchBlock')
     Sql getSql(DatabaseConfig databaseConfig) {
-        return Sql.newInstance(getJdbcUrl(databaseConfig), driverClass)
+        Sql sql = Sql.newInstance(getJdbcUrl(databaseConfig), driverClass)
+        try {
+            sql.execute('set schema "dbo"')
+        } catch (SQLSyntaxErrorException e) {
+            // Do Something Smarter here than try/catch
+        }
+        return sql
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.sql.ResultSet
 class DerbySchemaInformationService implements SchemaInformationService {
 
     @Override
-    boolean doesDatabaseExist(DatabaseConfig dbConfig, String dbName) {
+    boolean doesDatabaseExist(DatabaseConfig dbConfig) {
         // For use of Derby in Unit tests we are using the 'create=true' property on the url
         return true
     }

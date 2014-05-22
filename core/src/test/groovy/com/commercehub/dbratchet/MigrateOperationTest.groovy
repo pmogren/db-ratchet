@@ -1,8 +1,10 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import com.commercehub.dbratchet.filestore.ClasspathFileStore
 import com.commercehub.dbratchet.filestore.FileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
+import groovy.sql.Sql
 
 /**
  * Created by jaystgelais on 5/20/14.
@@ -10,14 +12,16 @@ import com.commercehub.dbratchet.schema.SchemaConfig
 class MigrateOperationTest extends GroovyTestCase {
 
     void testDefaultPath() {
-        DatabaseConfig databaseConfig = new MockDatabaseConfig().setDatabase('testDefaultPathFoMigrationOperationTest')
+        DatabaseConfig databaseConfig = new MockDatabaseConfig().setDatabase('testDefaultPathForMigrationOperationTest')
         FileStore fileStore = new ClasspathFileStore('/com/commercehub/dbratchet/sampledata/')
         setupDatabaseSchema(databaseConfig)
 
-        // TODO factor existing migration logic into MSSQL service and provide Derby version
         MigrateOperation migrateOp = new MigrateOperation(databaseConfig, fileStore)
         assert migrateOp.isConfigured()
-        //assert migrateOp.run()
+        assert migrateOp.run()
+
+        Sql sql = DatabaseClientFactory.getDatabaseClient(databaseConfig.vendor).getSql(databaseConfig)
+        assert sql.rows('select * from COURSES').size() > 0
     }
 
     private void setupDatabaseSchema(DatabaseConfig databaseConfig) {
