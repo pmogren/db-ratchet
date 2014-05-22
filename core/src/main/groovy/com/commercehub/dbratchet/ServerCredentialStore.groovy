@@ -1,5 +1,6 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.databases.DatabaseVendor
 import com.commercehub.dbratchet.schema.SchemaConfig
 
 /**
@@ -51,7 +52,7 @@ class ServerCredentialStore {
                 String alias = dbConfigElement.@alias.text()
                 DatabaseConfig dbConfig = new DatabaseConfig()
                         .setServer(dbConfigElement.@server.text())
-                        .setVendor(dbConfigElement.@vendor.text())
+                        .setVendor(DatabaseVendor.lookupDatabaseVendoryJdbcSubProtocol(dbConfigElement.@vendor.text()))
                 if (dbConfigElement.@user.size() > 0) {
                     dbConfig.setUser(dbConfigElement.@user.text())
                             .setPassword(dbConfigElement.@password.text())

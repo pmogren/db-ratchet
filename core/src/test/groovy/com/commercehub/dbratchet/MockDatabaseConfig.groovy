@@ -1,5 +1,7 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.databases.DatabaseVendor
+
 /**
  * Created by jgelais on 5/19/2014.
  */
@@ -13,8 +15,8 @@ class MockDatabaseConfig extends DatabaseConfig {
 
     @Override
     @SuppressWarnings('GetterMethodCouldBeProperty')
-    String getVendor() {
-        return 'derby'
+    DatabaseVendor getVendor() {
+        return DatabaseVendor.DERBY
     }
 
     @Override

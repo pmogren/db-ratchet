@@ -9,12 +9,12 @@ import com.commercehub.dbratchet.databases.mssql.MSSQLDatabaseClient
 class DatabaseClientFactory {
     private static final DatabaseClient MSSQL = new MSSQLDatabaseClient()
     private static final DatabaseClient DERBY = new DerbyDatabaseClient()
-    private static final Map<String, DatabaseClient> MAP = [
-            'sqlserver': MSSQL,
-            'derby':     DERBY
+    private static final Map<DatabaseVendor, DatabaseClient> MAP = [
+            (DatabaseVendor.MSSQL): MSSQL,
+            (DatabaseVendor.DERBY): DERBY
     ]
 
-    static DatabaseClient getDatabaseClient(String vendor) {
+    static DatabaseClient getDatabaseClient(DatabaseVendor vendor) {
         return MAP.get(vendor)
     }
 }

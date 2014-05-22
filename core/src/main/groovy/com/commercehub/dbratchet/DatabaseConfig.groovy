@@ -1,5 +1,7 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.databases.DatabaseVendor
+
 /**
  * Created with IntelliJ IDEA.
  * User: jgelais
@@ -7,7 +9,7 @@ package com.commercehub.dbratchet
  * Time: 11:25 AM
  */
 class DatabaseConfig implements Cloneable {
-    String vendor = 'sqlserver'
+    DatabaseVendor vendor = DatabaseVendor.MSSQL
     String server
     String database
     String user
@@ -44,7 +46,7 @@ class DatabaseConfig implements Cloneable {
         return password
     }
 
-    DatabaseConfig setVendor(String vendor) {
+    DatabaseConfig setVendor(DatabaseVendor vendor) {
         this.vendor = vendor
         return this
     }
