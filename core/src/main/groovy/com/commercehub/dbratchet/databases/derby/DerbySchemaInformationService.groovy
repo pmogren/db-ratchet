@@ -1,22 +1,15 @@
-package com.commercehub.dbratchet.schema.derby
+package com.commercehub.dbratchet.databases.derby
 
 import com.commercehub.dbratchet.DatabaseConfig
-import com.commercehub.dbratchet.schema.DatabaseOperationService
-import com.commercehub.dbratchet.util.GroovySqlRunner
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
+import com.commercehub.dbratchet.databases.SchemaInformationService
 
 import java.sql.ResultSet
 
 /**
  * Created by jgelais on 5/19/2014.
  */
-class DerbyDatabaseOperationService implements DatabaseOperationService {
-    public static final String JDBC_DRIVER_CLASS = 'org.apache.derby.jdbc.EmbeddedDriver'
-    static {
-        ClassLoader.systemClassLoader.loadClass(JDBC_DRIVER_CLASS)
-    }
-
-    String driverClass = JDBC_DRIVER_CLASS
-
+class DerbySchemaInformationService implements SchemaInformationService {
 
     @Override
     boolean doesDatabaseExist(DatabaseConfig dbConfig, String dbName) {
@@ -26,7 +19,7 @@ class DerbyDatabaseOperationService implements DatabaseOperationService {
 
     @Override
     boolean isDatabaseEmpty(DatabaseConfig dbConfig) {
-        return !GroovySqlRunner.getSql(dbConfig).connection.metaData
+        return !DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig).connection.metaData
                 .getTables(null, null, '%', ['TABLE', 'VIEW'].toArray(new String[0])).next()
     }
 
@@ -40,14 +33,14 @@ class DerbyDatabaseOperationService implements DatabaseOperationService {
             schema = tableNameParts[0]
             actualTableName = tableNameParts[1]
         }
-        return GroovySqlRunner.getSql(dbConfig).connection.metaData
+        return DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig).connection.metaData
                 .getTables(null, schema, "$actualTableName", null).next()
     }
 
     @SuppressWarnings('DuplicateStringLiteral')
     @SuppressWarnings('DuplicateListLiteral')
     static void printTableList(DatabaseConfig dbConfig) {
-        ResultSet rs = GroovySqlRunner.getSql(dbConfig).connection.metaData
+        ResultSet rs = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig).connection.metaData
                 .getTables(null, null, '%', ['TABLE', 'VIEW'].toArray(new String[0]))
         while (rs.next()) {
             println "Found table: ${rs.getString('TABLE_NAME')}"

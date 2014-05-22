@@ -54,15 +54,6 @@ class DatabaseConfig implements Cloneable {
         return this
     }
 
-    String getJdbcUrl() {
-        String jdbcUrl = "jdbc:jtds:${vendor}://${server}:1433"
-        if (database) {
-            jdbcUrl += "/${database}"
-        }
-
-        return jdbcUrl
-    }
-
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return new DatabaseConfig()

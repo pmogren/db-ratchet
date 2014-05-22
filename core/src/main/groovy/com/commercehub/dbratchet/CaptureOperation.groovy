@@ -2,8 +2,8 @@ package com.commercehub.dbratchet
 
 import com.commercehub.dbratchet.data.DataPackage
 import com.commercehub.dbratchet.data.DataPackageConfig
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import com.commercehub.dbratchet.filestore.FileStore
-import com.commercehub.dbratchet.util.GroovySqlRunner
 import org.dbunit.database.DatabaseConnection
 import org.dbunit.database.IDatabaseConnection
 import org.dbunit.database.QueryDataSet
@@ -75,6 +75,7 @@ class CaptureOperation implements Operation {
     }
 
     private IDatabaseConnection getDatabaseConnection() {
-        return new DatabaseConnection(GroovySqlRunner.getSql(dbConfig).connection)
+        return new DatabaseConnection(DatabaseClientFactory.getDatabaseClient(dbConfig.vendor)
+                .getSql(dbConfig).connection)
     }
 }

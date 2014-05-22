@@ -1,7 +1,7 @@
 package com.commercehub.dbratchet.util
 
 import com.commercehub.dbratchet.DatabaseConfig
-import com.commercehub.dbratchet.schema.DatabaseOperationServiceFactory
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import groovy.sql.Sql
 
 /**
@@ -25,7 +25,7 @@ class GroovySqlRunner implements SqlRunner {
 
     @Override
     boolean runScript(DatabaseConfig dbConfig, InputStream scriptContents) {
-        Sql sql = getSql(dbConfig)
+        Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
         try {
             parseScriptIntoTransactions(scriptContents).each { sqlString->
                 sql.execute(sqlString)
@@ -45,7 +45,7 @@ class GroovySqlRunner implements SqlRunner {
 
     @Override
     boolean runCommand(DatabaseConfig dbConfig, String sqlString) {
-        Sql sql = getSql(dbConfig)
+        Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
         try {
             sql.execute(sqlString)
         } catch (Exception e) {
@@ -57,19 +57,6 @@ class GroovySqlRunner implements SqlRunner {
         }
 
         return true
-    }
-
-    static Sql getSql(DatabaseConfig dbConfig) {
-        if (dbConfig.user) {
-            return Sql.newInstance(dbConfig.jdbcUrl, dbConfig.user, dbConfig.password,
-                    getJdbcDriverForVendor(dbConfig.vendor))
-        }
-
-        return Sql.newInstance(dbConfig.jdbcUrl, getJdbcDriverForVendor(dbConfig.vendor))
-    }
-
-    static String getJdbcDriverForVendor(String vendor) {
-        return DatabaseOperationServiceFactory.getDatabaseOperationService(vendor).driverClass
     }
 
     def parseScriptIntoTransactions(InputStream sql) {

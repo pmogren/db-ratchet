@@ -1,6 +1,7 @@
 package com.commercehub.dbratchet.schema
 
 import com.commercehub.dbratchet.DatabaseConfig
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import com.googlecode.flyway.core.Flyway
 
 /**
@@ -14,7 +15,8 @@ class SchemaMigrator {
 
     SchemaMigrator(DatabaseConfig dbConfig, SchemaConfig schemaConfig) {
         flyway = new Flyway().with {
-            setDataSource(dbConfig.jdbcUrl, dbConfig.user, dbConfig.password)
+            setDataSource(DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getJdbcUrl(dbConfig),
+                    dbConfig.user, dbConfig.password)
             setLocations(schemaConfig.schemaURLAsString)
             setSqlMigrationSuffix('upgrade.sql')
             setInitVersion('000.0000.000000')

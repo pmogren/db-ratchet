@@ -1,6 +1,6 @@
 package com.commercehub.dbratchet
 
-import com.commercehub.dbratchet.schema.DatabaseOperationServiceFactory
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.SchemaMigrator
 import com.commercehub.dbratchet.schema.Version
@@ -38,7 +38,7 @@ class BuildOperation implements Operation {
 
         boolean returnVal = true
 
-        if (!DatabaseOperationServiceFactory.getDatabaseOperationService(dbConfig.vendor)
+        if (!DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).schemaInformationService
                 .doesDatabaseExist(dbConfigWithoutDbName, dbConfig.database)) {
             returnVal &= sqlRunner.runCommand(dbConfigWithoutDbName, "create database ${dbConfig.database}")
             InputStream is = schemaConfig.fileStore.getFileInputStream("${SchemaConfig.SCRIPTS_DIR}/post-create.sql")
@@ -63,7 +63,8 @@ class BuildOperation implements Operation {
     }
 
     private boolean isDbSchemaEmpty() {
-        return DatabaseOperationServiceFactory.getDatabaseOperationService(dbConfig.vendor).isDatabaseEmpty(dbConfig)
+        return DatabaseClientFactory.getDatabaseClient(dbConfig.vendor)
+                .schemaInformationService.isDatabaseEmpty(dbConfig)
     }
 
     private void doSchemaMigration(Version version) {
@@ -89,7 +90,7 @@ class BuildOperation implements Operation {
     }
 
     private boolean isSchemaVersionTableInDatabase() {
-        return DatabaseOperationServiceFactory.getDatabaseOperationService(dbConfig.vendor)
+        return DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).schemaInformationService
                 .isTableInDatabase(dbConfig, 'dbo.schema_version')
     }
 }

@@ -1,7 +1,9 @@
-package com.commercehub.dbratchet.data
+package com.commercehub.dbratchet.databases.mssql
 
 import com.commercehub.dbratchet.DatabaseConfig
-import com.commercehub.dbratchet.util.GroovySqlRunner
+import com.commercehub.dbratchet.data.DataPackage
+import com.commercehub.dbratchet.databases.DataMigrator
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import groovy.sql.Sql
 
 /**
@@ -13,7 +15,7 @@ class MSSQLDataMigrator implements DataMigrator {
     void migratePackage(DatabaseConfig dbConfig, DataPackage dataPackage) {
         Date startTime = new Date()
         long mergeTime
-        Sql sql = GroovySqlRunner.getSql(dbConfig)
+        Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
         try {
             Map<String, String> tableToTempTableMap = getTableToTempTableMap(dataPackage)
             generateTempTables(dataPackage, tableToTempTableMap, sql)

@@ -1,6 +1,7 @@
-package com.commercehub.dbratchet.data
+package com.commercehub.dbratchet.databases
 
 import com.commercehub.dbratchet.DatabaseConfig
+import com.commercehub.dbratchet.data.DataPackage
 
 /**
  * Created by jaystgelais on 5/20/14.
