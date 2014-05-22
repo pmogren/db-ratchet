@@ -61,6 +61,7 @@ class DatabaseConfig implements Cloneable {
                         .setDatabase(database)
                         .setUser(user)
                         .setPassword(password)
+                        .setVendor(vendor)
     }
 
     @Override

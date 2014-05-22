@@ -12,11 +12,6 @@ class MockDatabaseConfig extends DatabaseConfig {
     }
 
     @Override
-    String getJdbcUrl() {
-        return "jdbc:derby:memory:${database};create=true"
-    }
-
-    @Override
     @SuppressWarnings('GetterMethodCouldBeProperty')
     String getVendor() {
         return 'derby'
@@ -29,5 +24,6 @@ class MockDatabaseConfig extends DatabaseConfig {
                 .setDatabase(database)
                 .setUser(user)
                 .setPassword(password)
+                .setVendor(vendor)
     }
 }
