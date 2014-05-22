@@ -5,8 +5,7 @@ import com.commercehub.dbratchet.schema.SchemaDifferenceEngine
 import com.commercehub.dbratchet.schema.SchemaDifferenceEngineFactory
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.Version
-import com.commercehub.dbratchet.util.SqlRunner
-import com.commercehub.dbratchet.util.SqlRunnerFactory
+import com.commercehub.dbratchet.util.SqlScriptRunner
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,7 +21,6 @@ class PublishOperation implements Operation {
     private final SchemaConfig schemaConfig
     private final DatabaseConfig dbConfig
     private final SchemaDifferenceEngineFactory schemaDifferenceEngineFactory
-    private final SqlRunner sqlRunner
     private final PUBLISH_TYPE publishType
 
     PublishOperation(SchemaConfig schemaConfig, DatabaseConfig dbConfig) {
@@ -34,7 +32,6 @@ class PublishOperation implements Operation {
         this.dbConfig = dbConfig
         this.publishType = publishType
 
-        sqlRunner = new SqlRunnerFactory().sqlRunner
         schemaDifferenceEngineFactory = new PresentFilestoreSchemaDifferenceEngineFactory()
     }
 
@@ -146,15 +143,15 @@ class PublishOperation implements Operation {
     }
 
     void applyFullBuildScriptToDatabase(Version version, DatabaseConfig dbConfigWithDatabase) {
-        sqlRunner.runScript(dbConfigWithDatabase, version.fullBuildScriptFile)
+        SqlScriptRunner.runScript(dbConfigWithDatabase, version.fullBuildScriptFile)
     }
 
     boolean runCreateDatabaseCommand(DatabaseConfig databaseConfig, String dbName) {
-        sqlRunner.runCommand(databaseConfig, "create database ${dbName}")
+        SqlScriptRunner.runCommand(databaseConfig, "create database ${dbName}")
     }
 
     boolean dropDatabase(DatabaseConfig databaseConfig, String dbName) {
-        sqlRunner.runCommand(databaseConfig, "drop database ${dbName}")
+        SqlScriptRunner.runCommand(databaseConfig, "drop database ${dbName}")
     }
 
     static String generateThrowAwayDatabaseName() {

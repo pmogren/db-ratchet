@@ -4,8 +4,7 @@ import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.SchemaMigrator
 import com.commercehub.dbratchet.schema.Version
-import com.commercehub.dbratchet.util.SqlRunner
-import com.commercehub.dbratchet.util.SqlRunnerFactory
+import com.commercehub.dbratchet.util.SqlScriptRunner
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +18,6 @@ class BuildOperation implements Operation {
     DatabaseConfig dbConfig
     DatabaseConfig dbConfigWithoutDbName
     Version version
-    SqlRunner sqlRunner
     SchemaConfig schemaConfig
 
     BuildOperation(DatabaseConfig dbConfig, Version version, SchemaConfig schemaConfig) {
@@ -27,7 +25,6 @@ class BuildOperation implements Operation {
         dbConfigWithoutDbName = dbConfig.clone().setDatabase(null)
         this.version = version
         this.schemaConfig = schemaConfig
-        this.sqlRunner = new SqlRunnerFactory().sqlRunner
     }
 
     @Override
@@ -40,10 +37,10 @@ class BuildOperation implements Operation {
 
         if (!DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).schemaInformationService
                 .doesDatabaseExist(dbConfigWithoutDbName, dbConfig.database)) {
-            returnVal &= sqlRunner.runCommand(dbConfigWithoutDbName, "create database ${dbConfig.database}")
+            returnVal &= SqlScriptRunner.runCommand(dbConfigWithoutDbName, "create database ${dbConfig.database}")
             InputStream is = schemaConfig.fileStore.getFileInputStream("${SchemaConfig.SCRIPTS_DIR}/post-create.sql")
             if (is) {
-                sqlRunner.runScript(dbConfig, is)
+                SqlScriptRunner.runScript(dbConfig, is)
             }
         }
 

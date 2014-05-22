@@ -11,20 +11,17 @@ import groovy.sql.Sql
  * Time: 5:05 PM
  */
 @SuppressWarnings('CatchException')
-class GroovySqlRunner implements SqlRunner {
+class SqlScriptRunner {
 
-    @Override
-    boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
+    static boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
         runScript(dbConfig, scriptFile.newInputStream())
     }
 
-    @Override
-    boolean runScript(DatabaseConfig dbConfig, String scriptFilePath) {
+    static boolean runScript(DatabaseConfig dbConfig, String scriptFilePath) {
         runScript(dbConfig, new File(scriptFilePath))
     }
 
-    @Override
-    boolean runScript(DatabaseConfig dbConfig, InputStream scriptContents) {
+    static boolean runScript(DatabaseConfig dbConfig, InputStream scriptContents) {
         Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
         try {
             parseScriptIntoTransactions(scriptContents).each { sqlString->
@@ -43,8 +40,7 @@ class GroovySqlRunner implements SqlRunner {
         return true
     }
 
-    @Override
-    boolean runCommand(DatabaseConfig dbConfig, String sqlString) {
+    static boolean runCommand(DatabaseConfig dbConfig, String sqlString) {
         Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
         try {
             sql.execute(sqlString)
@@ -59,8 +55,8 @@ class GroovySqlRunner implements SqlRunner {
         return true
     }
 
-    def parseScriptIntoTransactions(InputStream sql) {
-        def commandList = []
+    private static List<String> parseScriptIntoTransactions(InputStream sql) {
+        List<String> commandList = [] as Queue<String>
         String currentCommand = ''
         sql.eachLine { line->
             if ('GO' == (line)) {

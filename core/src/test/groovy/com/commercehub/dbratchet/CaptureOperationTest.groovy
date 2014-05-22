@@ -4,7 +4,7 @@ import com.commercehub.dbratchet.filestore.ClasspathFileStore
 import com.commercehub.dbratchet.filestore.FileStore
 import com.commercehub.dbratchet.filestore.MockInMemoryFileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
-import com.commercehub.dbratchet.util.GroovySqlRunner
+import com.commercehub.dbratchet.util.SqlScriptRunner
 
 /**
  * Created by jaystgelais on 5/19/14.
@@ -52,7 +52,7 @@ class CaptureOperationTest extends GroovyTestCase {
     }
 
     private void setupSampleData(DatabaseConfig databaseConfig) {
-        def sqlRunner = new GroovySqlRunner()
+        def sqlRunner = new SqlScriptRunner()
         assert sqlRunner.runCommand(databaseConfig, 'insert into dbo.Courses values (1, \'Biology 101\', 2013, \'F\')')
         assert sqlRunner.runCommand(databaseConfig, 'insert into dbo.Courses values (2, \'Biology 101\', 2014, \'S\')')
         assert sqlRunner.runCommand(databaseConfig,
