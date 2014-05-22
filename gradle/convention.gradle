@@ -5,11 +5,6 @@ allprojects {
 	apply plugin: 'cobertura'
 	apply plugin: 'codenarc'
     apply plugin: "idea"
-
-    dependencies {
-        compile 'org.codehaus.groovy:groovy-all:2.1.7'
-        compile 'com.google.guava:guava:15.0'
-    }
 }
 
 
@@ -17,6 +12,12 @@ allprojects {
 subprojects { project ->
     apply plugin: "groovy"
     sourceCompatibility = 1.6
+
+    dependencies {
+        compile 'org.codehaus.groovy:groovy-all:2.1.7'
+        compile 'com.google.guava:guava:15.0'
+        testCompile 'junit:junit:4.11'
+    }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         from sourceSets.main.allSource
