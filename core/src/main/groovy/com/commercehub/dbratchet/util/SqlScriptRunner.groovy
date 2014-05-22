@@ -11,10 +11,26 @@ import groovy.sql.Sql
  * Time: 5:05 PM
  */
 @SuppressWarnings('CatchException')
+@SuppressWarnings('DuplicateStringLiteral')
 class SqlScriptRunner {
 
     static boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
-        runScript(dbConfig, scriptFile.newInputStream())
+        Sql sql = getSql(dbConfig)
+        try {
+            parseScriptIntoTransactions(scriptFile).each { sqlString->
+                sql.execute(sqlString)
+            }
+        } catch (Exception e) {
+            System.err.println "Error running SQL Script: ${scriptFile.absolutePath}"
+            System.err.println 'Because SQL scripts can manage their own transactions,' +
+                    ' this script may have been partially applied.'
+            e.printStackTrace()
+            return false
+        } finally {
+            sql.close()
+        }
+
+        return true
     }
 
     static boolean runScript(DatabaseConfig dbConfig, String scriptFilePath) {
@@ -55,10 +71,29 @@ class SqlScriptRunner {
         return true
     }
 
-    private static List<String> parseScriptIntoTransactions(InputStream sql) {
+    private static List<String> parseScriptIntoTransactions(File scriptFile) {
         List<String> commandList = [] as Queue<String>
         String currentCommand = ''
-        sql.eachLine { line->
+        scriptFile.eachLine { line->
+            if ('GO' == (line)) {
+                commandList.add(currentCommand)
+                currentCommand = ''
+            } else {
+                currentCommand = "${currentCommand}${line}\n"
+            }
+        }
+
+        if (!currentCommand.isEmpty()) {
+            commandList.add(currentCommand)
+        }
+
+        return commandList
+    }
+
+    private static List<String> parseScriptIntoTransactions(InputStream sqlInputStream) {
+        List<String> commandList = [] as Queue<String>
+        String currentCommand = ''
+        sqlInputStream.eachLine { line->
             if ('GO' == (line)) {
                 commandList.add(currentCommand)
                 currentCommand = ''
