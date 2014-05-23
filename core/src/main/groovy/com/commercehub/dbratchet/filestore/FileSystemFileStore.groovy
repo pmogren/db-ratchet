@@ -9,6 +9,19 @@ import java.util.regex.Pattern
  * Created by jgelais on 5/15/2014.
  */
 class FileSystemFileStore implements FileStore {
+    private File rootDir
+
+    FileSystemFileStore() {
+        this(new File('.'))
+    }
+
+    FileSystemFileStore(File rootDir) {
+        if (!rootDir.isDirectory()) {
+            throw new IllegalArgumentException("File [$rootDir.absolutePath] is not a directory!")
+        }
+        this.rootDir = rootDir
+    }
+
     @Override
     InputStream getFileInputStream(String path) {
         return getFile(path).newInputStream()
@@ -23,7 +36,7 @@ class FileSystemFileStore implements FileStore {
 
     @Override
     File getFile(String path) {
-        return new File(path)
+        return new File(rootDir, path)
     }
 
     @Override
@@ -50,7 +63,7 @@ class FileSystemFileStore implements FileStore {
 
     @Override
     String getFileStoreRootURLAsString() {
-        return "filesystem:${getFile('.').path}/"
+        return "filesystem:${rootDir.absolutePath}/"
     }
 
     private void ensureFileExistence(File file) {

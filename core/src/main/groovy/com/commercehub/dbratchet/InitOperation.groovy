@@ -68,7 +68,7 @@ class InitOperation implements Operation {
         }
     }
 
-    private static void mkdir(String dirName) {
-        new File(dirName).mkdir()
+    private void mkdir(String dirName) {
+        schemaConfig.fileStore.getFile(dirName).mkdir()
     }
 }

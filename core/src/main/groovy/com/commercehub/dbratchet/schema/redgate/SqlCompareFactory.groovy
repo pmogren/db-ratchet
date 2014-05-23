@@ -21,7 +21,7 @@ class SqlCompareFactory {
     }
 
     SqlCompare newSqlCompare() {
-        return new SqlCompare(sqlCompareCmd)
+        return (sqlCompareCmd) ? new SqlCompare(sqlCompareCmd) : null
     }
 
     String locateSqlCompareCmd() {
@@ -36,6 +36,8 @@ class SqlCompareFactory {
         if (isSqlCompareAtDefaultInstallLocation()) {
             return "${DEFAULT_INSTALL_LOCATION}${SQL_COMPARE_EXE}"
         }
+
+        return null
     }
 
     boolean isSqlCompareOnPath() {

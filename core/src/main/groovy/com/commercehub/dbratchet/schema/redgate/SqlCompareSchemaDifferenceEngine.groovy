@@ -32,8 +32,8 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
     SqlCompareSchemaDifferenceEngine(SchemaConfig config) {
         sqlCompare = new SqlCompareFactory().newSqlCompare()
         schemaConfig = config
-        fileStoreDir = new File(schemaConfig.rootDir, SCHEMA_DIR)
-        configDir = new File(schemaConfig.rootDir, CONFIG_DIR)
+        fileStoreDir = schemaConfig.fileStore.getFile(SCHEMA_DIR)
+        configDir = schemaConfig.fileStore.getFile(CONFIG_DIR)
         filterFile = new File(configDir, FILTER_FILE_NAME)
         filterConfigFile = new File(configDir, FILE_FILTER_FILE_NAME)
 
