@@ -66,5 +66,5 @@ atlassian-ide-plugin.xml
 .factorypath
 .generated
 
-# NetBeans specific files/directories
-.nbattrs
+# Unit test configuration
+msssql-config.properties
