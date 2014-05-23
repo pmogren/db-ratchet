@@ -75,7 +75,7 @@ class ServerCredentialStore {
     String toString() {
         String str = ''
         credentials.keySet().sort().each { key ->
-            str += "${key}: {${credentials.get(key)}\n"
+            str += "${key}: {${credentials.get(key)}}\n"
         }
         return str
     }
