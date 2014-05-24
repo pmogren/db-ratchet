@@ -15,6 +15,7 @@ import com.commercehub.dbratchet.util.SqlScriptRunner
  * Date: 9/17/13
  * Time: 4:59 PM
  */
+// TODO Write Unit Test
 class PublishOperation implements Operation {
     static final enum PUBLISH_TYPE { POINT, MINOR, MAJOR }
 
