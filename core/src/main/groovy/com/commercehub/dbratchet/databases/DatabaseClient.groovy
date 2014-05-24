@@ -13,6 +13,8 @@ interface DatabaseClient {
     @SuppressWarnings('FactoryMethodName')
     boolean createDatabase(DatabaseConfig databaseConfig)
 
+    boolean deleteDatabase(DatabaseConfig databaseConfig)
+
     DataMigrator getDataMigrator()
 
     SchemaInformationService getSchemaInformationService()

@@ -27,6 +27,12 @@ class DerbyDatabaseClient implements DatabaseClient {
     }
 
     @Override
+    boolean deleteDatabase(DatabaseConfig databaseConfig) {
+        // Do nothing. In-memory databases will cease to exist when process finishes.
+        return true
+    }
+
+    @Override
     DataMigrator getDataMigrator() {
         return new DbUnitDataMigrator()
     }

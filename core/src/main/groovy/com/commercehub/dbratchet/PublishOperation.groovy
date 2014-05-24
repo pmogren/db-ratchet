@@ -1,5 +1,7 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.databases.DatabaseClient
+import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import com.commercehub.dbratchet.schema.PresentFilestoreSchemaDifferenceEngineFactory
 import com.commercehub.dbratchet.schema.SchemaDifferenceEngine
 import com.commercehub.dbratchet.schema.SchemaDifferenceEngineFactory
@@ -19,19 +21,21 @@ class PublishOperation implements Operation {
     final String name = 'Publish'
 
     private final SchemaConfig schemaConfig
-    private final DatabaseConfig dbConfig
+    private final DatabaseConfig dbServerConfig
     private final SchemaDifferenceEngineFactory schemaDifferenceEngineFactory
     private final PUBLISH_TYPE publishType
+    private final DatabaseClient databaseClient
 
-    PublishOperation(SchemaConfig schemaConfig, DatabaseConfig dbConfig) {
-        this(schemaConfig, dbConfig, PUBLISH_TYPE.POINT)
+    PublishOperation(SchemaConfig schemaConfig, DatabaseConfig dbServerConfig) {
+        this(schemaConfig, dbServerConfig, PUBLISH_TYPE.POINT)
     }
 
-    PublishOperation(SchemaConfig schemaConfig, DatabaseConfig dbConfig, PUBLISH_TYPE publishType) {
+    PublishOperation(SchemaConfig schemaConfig, DatabaseConfig dbServerConfig, PUBLISH_TYPE publishType) {
         this.schemaConfig = schemaConfig
-        this.dbConfig = dbConfig
+        this.dbServerConfig = dbServerConfig
         this.publishType = publishType
 
+        databaseClient = DatabaseClientFactory.getDatabaseClient(dbServerConfig.vendor)
         schemaDifferenceEngineFactory = new PresentFilestoreSchemaDifferenceEngineFactory()
     }
 
@@ -81,19 +85,20 @@ class PublishOperation implements Operation {
 
     boolean performComparisonWithTransientDB(Closure comparisonAction) {
         boolean returnVal = true
-        String dbName = generateThrowAwayDatabaseName()
-        boolean hasDatabaseBeenCreated = runCreateDatabaseCommand(dbConfig, dbName)
+        DatabaseConfig dbConfig = getDatabaseConfgOnServer(dbServerConfig, generateThrowAwayDatabaseName())
+        boolean hasDatabaseBeenCreated = databaseClient.createDatabase(dbConfig)
         if (!hasDatabaseBeenCreated) {
-            System.err.println "Unable to create database [${dbName}] on server [${dbConfig.server}]"
+            System.err.println "Unable to create database [${dbConfig.database}] on server [${dbConfig.server}]"
             return false
         }
 
         try {
-            comparisonAction.call(dbConfig.serverConfig)
+            comparisonAction.call(dbServerConfig)
         } finally {
             if (hasDatabaseBeenCreated) {
-                if (!dropDatabase(dbConfig, dbName)) {
-                    System.err.println "ERROR: Unable to clean up database [${dbConfig.server}.${dbName}]. " +
+                if (!databaseClient.deleteDatabase(dbConfig)) {
+                    System.err.println 'ERROR: Unable to clean up database ' +
+                            "[${dbConfig.server}.${dbConfig.database}]. " +
                             'Please make sure to clean this up manually'
                 }
             }
@@ -146,12 +151,13 @@ class PublishOperation implements Operation {
         SqlScriptRunner.runScript(dbConfigWithDatabase, version.fullBuildScriptFile)
     }
 
-    boolean runCreateDatabaseCommand(DatabaseConfig databaseConfig, String dbName) {
-        SqlScriptRunner.runCommand(databaseConfig, "create database ${dbName}")
-    }
-
-    boolean dropDatabase(DatabaseConfig databaseConfig, String dbName) {
-        SqlScriptRunner.runCommand(databaseConfig, "drop database ${dbName}")
+    DatabaseConfig getDatabaseConfgOnServer(DatabaseConfig databaseServerConfig, String dbName) {
+        return new DatabaseConfig()
+                .setVendor(databaseServerConfig.vendor)
+                .setServer(dbServerConfig.server)
+                .setDatabase(dbName)
+                .setUser(dbServerConfig.user)
+                .setPassword(dbServerConfig.password)
     }
 
     static String generateThrowAwayDatabaseName() {
@@ -162,6 +168,6 @@ class PublishOperation implements Operation {
 
     @Override
     boolean isConfigured() {
-        return dbConfig.isValidServerConfig()
+        return dbServerConfig.isValidServerConfig()
     }
 }

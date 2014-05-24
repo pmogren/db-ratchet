@@ -24,6 +24,11 @@ class MSSQLDatabaseClient implements DatabaseClient {
     }
 
     @Override
+    boolean deleteDatabase(DatabaseConfig databaseConfig) {
+        return SqlScriptRunner.runCommand(databaseConfig.serverConfig, "drop database ${databaseConfig.database}")
+    }
+
+    @Override
     DataMigrator getDataMigrator() {
         return new MSSQLDataMigrator()
     }
