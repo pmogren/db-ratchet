@@ -67,4 +67,4 @@ atlassian-ide-plugin.xml
 .generated
 
 # Unit test configuration
-msssql-config.properties
+mssql-config.properties

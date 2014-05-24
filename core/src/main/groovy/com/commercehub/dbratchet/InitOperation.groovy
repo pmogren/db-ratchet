@@ -38,7 +38,7 @@ class InitOperation implements Operation {
     }
 
     void generatePostCreateScriptTemplate() {
-        File postCreateSql = new File(SchemaConfig.SCRIPTS_DIR, 'post-create.sql')
+        File postCreateSql = schemaConfig.fileStore.getFile("${SchemaConfig.SCRIPTS_DIR}/post-create.sql")
         postCreateSql.createNewFile()
         postCreateSql.text = POST_CREATE_SCRIPT_TEMPLATE
     }
@@ -60,7 +60,7 @@ class InitOperation implements Operation {
     }
 
     void generateDataPackagesXml() {
-        File destFile = new File(SchemaConfig.DATA_DIR, 'data-packages.xml')
+        File destFile = schemaConfig.fileStore.getFile("${SchemaConfig.DATA_DIR}/data-packages.xml")
         destFile.createNewFile()
 
         this.getClass().getResource('/templates/data-packages.xml').withInputStream { is->

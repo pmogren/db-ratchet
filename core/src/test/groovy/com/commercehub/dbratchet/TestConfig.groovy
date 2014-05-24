@@ -15,13 +15,12 @@ class TestConfig {
 
     static {
         isRedgateAvailable = new SqlCompareFactory().newSqlCompare()
-        mssqlServerCredentials = loadMsqlServerCredentials()
+        mssqlServerCredentials = loadMssqlServerCredentials()
         isMSSQLAvailable = mssqlServerCredentials
     }
 
-    // TODO configure build to include test-config n test runtime classpath
-    private static DatabaseConfig loadMsqlServerCredentials() {
-        InputStream congigInputStream = TestConfig.getResourceAsStream('msssql-config.properties')
+    private static DatabaseConfig loadMssqlServerCredentials() {
+        InputStream congigInputStream = TestConfig.getResourceAsStream('/mssql-config.properties')
         if (congigInputStream) {
             Properties props = new Properties()
             props.load(congigInputStream)
