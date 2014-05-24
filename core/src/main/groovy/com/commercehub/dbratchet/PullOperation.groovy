@@ -36,21 +36,6 @@ class PullOperation implements Operation {
 
     @Override
     boolean isConfigured() {
-        if (!dbConfig.server) {
-            println 'Missing SERVER'
-            return false
-        }
-
-        if (!dbConfig.database) {
-            println 'Missing DATABASE'
-            return false
-        }
-
-        if (dbConfig.user && !dbConfig.password) {
-            println 'Missing PASSWORD'
-            return false
-        }
-
-        return true
+        return dbConfig.isValidDatabaseConfig()
     }
 }

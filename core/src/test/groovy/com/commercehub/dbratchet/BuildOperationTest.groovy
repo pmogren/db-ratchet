@@ -1,6 +1,7 @@
 package com.commercehub.dbratchet
 
 import com.commercehub.dbratchet.databases.DatabaseClientFactory
+import com.commercehub.dbratchet.databases.DatabaseVendor
 import com.commercehub.dbratchet.databases.SchemaInformationService
 import com.commercehub.dbratchet.filestore.ClasspathFileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
@@ -12,7 +13,7 @@ import com.commercehub.dbratchet.databases.derby.DerbySchemaInformationService
  */
 class BuildOperationTest extends GroovyTestCase {
     void testDefaultPath() {
-        def databaseConfig = new MockDatabaseConfig().setDatabase('testDefaultPathForBuildOperationTest')
+        def databaseConfig = getDatabaseConfig('testDefaultPathForBuildOperationTest')
         BuildOperation buildOp = new BuildOperation(databaseConfig, null,
                 new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema/')))
         assert buildOp.isConfigured()
@@ -26,7 +27,7 @@ class BuildOperationTest extends GroovyTestCase {
     }
 
     void testMigrationToSpecificVersion() {
-        def databaseConfig = new MockDatabaseConfig().setDatabase('testMigrationToSpecificVersionForBuildOperationTest')
+        def databaseConfig = getDatabaseConfig('testMigrationToSpecificVersionForBuildOperationTest')
         BuildOperation buildOp = new BuildOperation(databaseConfig, new Version(0,1,0),
                 new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema/')))
         assert buildOp.run()
@@ -48,7 +49,7 @@ class BuildOperationTest extends GroovyTestCase {
     }
 
     void testSafetyCheck() {
-        def databaseConfig = new MockDatabaseConfig().setDatabase('testSafetyCheckForBuildOperationTest')
+        def databaseConfig = getDatabaseConfig('testSafetyCheckForBuildOperationTest')
         BuildOperation buildOp = new BuildOperation(databaseConfig, new Version(0,1,0),
                 new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema/')))
         assert buildOp.run()
@@ -57,5 +58,9 @@ class BuildOperationTest extends GroovyTestCase {
         DatabaseClientFactory.getDatabaseClient(databaseConfig.vendor).getSql(databaseConfig)
                 .execute('drop table "dbo"."schema_version"')
         assert !buildOp.run()
+    }
+
+    private DatabaseConfig getDatabaseConfig(String database) {
+        new DatabaseConfig().setDatabase(database).setServer('memory').setVendor(DatabaseVendor.DERBY)
     }
 }

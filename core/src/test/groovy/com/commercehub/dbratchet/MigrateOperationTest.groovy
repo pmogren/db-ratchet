@@ -1,6 +1,7 @@
 package com.commercehub.dbratchet
 
 import com.commercehub.dbratchet.databases.DatabaseClientFactory
+import com.commercehub.dbratchet.databases.DatabaseVendor
 import com.commercehub.dbratchet.filestore.ClasspathFileStore
 import com.commercehub.dbratchet.filestore.FileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
@@ -12,7 +13,7 @@ import groovy.sql.Sql
 class MigrateOperationTest extends GroovyTestCase {
 
     void testDefaultPath() {
-        DatabaseConfig databaseConfig = new MockDatabaseConfig().setDatabase('testDefaultPathForMigrationOperationTest')
+        DatabaseConfig databaseConfig = getDatabaseConfig('testDefaultPathForMigrationOperationTest')
         FileStore fileStore = new ClasspathFileStore('/com/commercehub/dbratchet/sampledata/')
         setupDatabaseSchema(databaseConfig)
 
@@ -29,6 +30,10 @@ class MigrateOperationTest extends GroovyTestCase {
                 new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema/')))
         assert buildOp.isConfigured()
         assert buildOp.run()
+    }
+
+    private DatabaseConfig getDatabaseConfig(String database) {
+        new DatabaseConfig().setDatabase(database).setServer('memory').setVendor(DatabaseVendor.DERBY)
     }
 
 }

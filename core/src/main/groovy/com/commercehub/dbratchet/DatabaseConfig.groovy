@@ -70,6 +70,22 @@ class DatabaseConfig implements Cloneable {
                         .setVendor(vendor)
     }
 
+    boolean isValidServerConfig() {
+        if (!server) {
+            return false
+        }
+
+        if (user && !password) {
+            return false
+        }
+
+        return true
+    }
+
+    boolean isValidDatabaseConfig() {
+        return isValidServerConfig() && database
+    }
+
     @Override
     String toString() {
         return "server: $server | vendor: $vendor | database: $database | user: $user | password: $password"

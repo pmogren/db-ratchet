@@ -36,14 +36,6 @@ class StoreOperation implements Operation {
             return false
         }
 
-        if (!dbConfig.server) {
-            return false
-        }
-
-        if (dbConfig.user && !dbConfig.password) {
-            return false
-        }
-
-        return true
+        return dbConfig.isValidServerConfig()
     }
 }

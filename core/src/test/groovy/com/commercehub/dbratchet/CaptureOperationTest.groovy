@@ -1,5 +1,6 @@
 package com.commercehub.dbratchet
 
+import com.commercehub.dbratchet.databases.DatabaseVendor
 import com.commercehub.dbratchet.databases.derby.DerbySchemaInformationService
 import com.commercehub.dbratchet.filestore.ClasspathFileStore
 import com.commercehub.dbratchet.filestore.FileStore
@@ -13,7 +14,7 @@ import com.commercehub.dbratchet.util.SqlScriptRunner
 class CaptureOperationTest extends GroovyTestCase {
 
     void testDefaultPath() {
-        DatabaseConfig databaseConfig = new MockDatabaseConfig().setDatabase('testDefaultPathForCaptureOperationTest')
+        DatabaseConfig databaseConfig = getDatabaseConfig('testDefaultPathForCaptureOperationTest')
         FileStore fileStore = new MockInMemoryFileStore()
         setupDatabaseSchema(databaseConfig)
         setupSampleData(databaseConfig)
@@ -66,5 +67,9 @@ class CaptureOperationTest extends GroovyTestCase {
                 new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema/')))
         assert buildOp.run()
         DerbySchemaInformationService.printTableList(databaseConfig)
+    }
+
+    private DatabaseConfig getDatabaseConfig(String database) {
+        new DatabaseConfig().setDatabase(database).setServer('memory').setVendor(DatabaseVendor.DERBY)
     }
 }

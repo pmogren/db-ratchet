@@ -71,19 +71,7 @@ class BuildOperation implements Operation {
 
     @Override
     boolean isConfigured() {
-        if (!dbConfig.server) {
-            return false
-        }
-
-        if (!dbConfig.database) {
-            return false
-        }
-
-        if (dbConfig.user && !dbConfig.password) {
-            return false
-        }
-
-        return true
+        return dbConfig.isValidDatabaseConfig()
     }
 
     private boolean isSchemaVersionTableInDatabase() {
