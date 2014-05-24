@@ -12,6 +12,7 @@ import com.commercehub.dbratchet.schema.Version
  * Created by jaystgelais on 5/24/14.
  */
 // TODO Write Unit Test
+// TODO Add switch for update vs script mode
 class WrangleOperation implements Operation {
     final String name = 'wrangle'
 

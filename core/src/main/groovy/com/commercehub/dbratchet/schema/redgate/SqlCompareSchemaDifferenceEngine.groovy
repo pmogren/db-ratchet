@@ -64,14 +64,17 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
         }
     }
 
-    void pushSourceToTarget() {
-        sqlCompare.setDoSynch(true).run()
-        if (isInitialCapture()) {
-            new SchemaFilterBugWorkaroundUtil().removeFilteredFiles(fileStoreDir)
+    boolean pushSourceToTarget() {
+        boolean isSuccessful = sqlCompare.setDoSynch(true).run()
+        if (isSuccessful) {
+            if (isInitialCapture()) {
+                new SchemaFilterBugWorkaroundUtil().removeFilteredFiles(fileStoreDir)
+            }
+            if (isTargetFileStore()) {
+                processFileFilters()
+            }
         }
-        if (isTargetFileStore()) {
-            processFileFilters()
-        }
+        return isSuccessful
     }
 
     void generateScriptToBuildSourceToTarget(File script) {

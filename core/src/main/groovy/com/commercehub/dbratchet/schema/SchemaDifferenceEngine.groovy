@@ -15,7 +15,7 @@ interface SchemaDifferenceEngine {
     void useFileStoreAsSource()
     void useFileStoreAsTarget()
     File getFileStoreDir()
-    void pushSourceToTarget()
+    boolean pushSourceToTarget()
     void generateScriptToBuildSourceToTarget(File script)
     void initializeSchemaStore()
 }
