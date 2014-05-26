@@ -56,7 +56,7 @@ class WrangleOperation implements Operation {
         try {
             isSuccessful = doComparison(comparisonDatabaseConfig, dbConfig)
             if (isSuccessful) {
-                isSuccessful = transferSchemaVersionTable(comparisonDatabaseConfig, dbConfig)
+                isSuccessful = generateSchemaVersionLog(comparisonDatabaseConfig, dbConfig)
             }
         } finally {
             if (!databaseClient.deleteDatabase(comparisonDatabaseConfig)) {
@@ -67,6 +67,18 @@ class WrangleOperation implements Operation {
         }
 
         return isSuccessful
+    }
+
+    private boolean generateSchemaVersionLog(DatabaseConfig srcDatabaseConfig, DatabaseConfig targetDatabaseConfig) {
+        if (outputScriptFile) {
+            return scriptSchemaVersionLog(srcDatabaseConfig)
+        }
+        return transferSchemaVersionTable(srcDatabaseConfig, targetDatabaseConfig)
+    }
+
+    boolean scriptSchemaVersionLog(DatabaseConfig databaseConfig) {
+        // TODO Actually implement this
+        return (databaseConfig != null)
     }
 
     private boolean transferSchemaVersionTable(DatabaseConfig srcDatabaseConfig, DatabaseConfig targetDatabaseConfig) {
@@ -103,6 +115,10 @@ class WrangleOperation implements Operation {
         SchemaDifferenceEngine sde = schemaDifferenceEngineFactory.getSchemaDifferenceEngine(schemaConfig)
         sde.setSourceDatabase(srcDatabaseConfig)
         sde.setTargetDatabase(targetDatabaseConfig)
+        if (outputScriptFile) {
+            return sde.generateScriptToBuildSourceToTarget(outputScriptFile)
+        }
+
         return sde.pushSourceToTarget()
     }
 

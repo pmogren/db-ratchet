@@ -77,7 +77,7 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
         return isSuccessful
     }
 
-    void generateScriptToBuildSourceToTarget(File script) {
+    boolean generateScriptToBuildSourceToTarget(File script) {
         sqlCompare.setScriptFile(script.absolutePath)
                 .setDoSynch(false)
                 .run()
