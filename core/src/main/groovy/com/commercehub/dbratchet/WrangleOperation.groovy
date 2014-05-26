@@ -8,7 +8,7 @@ import com.commercehub.dbratchet.schema.SchemaDifferenceEngine
 import com.commercehub.dbratchet.schema.SchemaDifferenceEngineFactory
 import com.commercehub.dbratchet.schema.SchemaMigrator
 import com.commercehub.dbratchet.schema.Version
-import com.googlecode.flyway.core.api.FlywayException
+import org.flywaydb.core.api.FlywayException
 import groovy.sql.DataSet
 import groovy.sql.Sql
 
@@ -26,11 +26,17 @@ class WrangleOperation implements Operation {
     private final SchemaConfig schemaConfig
     private final SchemaDifferenceEngineFactory schemaDifferenceEngineFactory
     private final DatabaseClient databaseClient
+    private final File outputScriptFile
 
     WrangleOperation(DatabaseConfig dbConfig, Version version, SchemaConfig schemaConfig) {
+        this(dbConfig, version, schemaConfig, null)
+    }
+
+    WrangleOperation(DatabaseConfig dbConfig, Version version, SchemaConfig schemaConfig, File outputScriptFile) {
         this.dbConfig = dbConfig
         this.version = version
         this.schemaConfig = schemaConfig
+        this.outputScriptFile = outputScriptFile
 
         databaseClient = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor)
         schemaDifferenceEngineFactory = new PresentFilestoreSchemaDifferenceEngineFactory()

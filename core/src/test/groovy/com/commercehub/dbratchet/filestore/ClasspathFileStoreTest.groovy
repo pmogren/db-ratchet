@@ -47,7 +47,7 @@ class ClasspathFileStoreTest extends GroovyTestCase {
         assert list.contains('test-resource1.txt')
         assert list.contains('test-resource2.txt')
 
-        assert !filestore.scanRecursivelyForFiles('com/googlecode/flyway/core', 'Flyway.class').isEmpty()
+        assert !filestore.scanRecursivelyForFiles('org/flywaydb/core', 'Flyway.class').isEmpty()
     }
 
     void testThatIUnderstandRegex() {
