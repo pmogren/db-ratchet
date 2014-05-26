@@ -30,4 +30,8 @@ class SchemaMigrator {
         flyway.setTarget(version.toString())
         flyway.migrate()
     }
+
+    void initializeSchemaVersionTable() {
+        flyway.init()
+    }
 }
