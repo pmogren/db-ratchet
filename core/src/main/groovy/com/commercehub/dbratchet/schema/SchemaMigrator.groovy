@@ -32,6 +32,10 @@ class SchemaMigrator {
         }
     }
 
+    String getSchemaTableName() {
+        return flyway.table
+    }
+
     void migrate(Version version) {
         flyway.setTarget(version.toString())
         flyway.migrate()

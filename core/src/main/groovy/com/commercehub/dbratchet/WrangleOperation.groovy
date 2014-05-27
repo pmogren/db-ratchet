@@ -8,6 +8,7 @@ import com.commercehub.dbratchet.schema.SchemaDifferenceEngine
 import com.commercehub.dbratchet.schema.SchemaDifferenceEngineFactory
 import com.commercehub.dbratchet.schema.SchemaMigrator
 import com.commercehub.dbratchet.schema.Version
+import groovy.sql.GroovyRowResult
 import org.flywaydb.core.api.FlywayException
 import groovy.sql.DataSet
 import groovy.sql.Sql
@@ -16,7 +17,6 @@ import groovy.sql.Sql
  * Created by jaystgelais on 5/24/14.
  */
 // TODO Write Unit Test
-// TODO Add switch for update vs script mode
 // TODO Add this to the command line application
 class WrangleOperation implements Operation {
     final String name = 'wrangle'
@@ -77,8 +77,27 @@ class WrangleOperation implements Operation {
     }
 
     boolean scriptSchemaVersionLog(DatabaseConfig databaseConfig) {
-        // TODO Actually implement this
-        return (databaseConfig != null)
+        outputScriptFile.append(SchemaMigrator.getSchemaVersionTableCreateScript(dbConfig.vendor))
+        String tableName = getSchemaVersionTableName(databaseConfig)
+        databaseClient.getSql(databaseConfig).dataSet(tableName).rows().each { row ->
+            String insertSQL = writeInsertStatement(tableName, row)
+            outputScriptFile.append("${insertSQL}\n")
+        }
+        return true
+    }
+
+    @SuppressWarnings('DuplicateStringLiteral')
+    String writeInsertStatement(String tableName, GroovyRowResult rowResult) {
+        List<String> fieldNames = rowResult.keySet().asList()
+        List<String> fieldValues = [] as Queue<String>
+        fieldNames.each { key ->
+            fieldValues.add(escapeAndQuoteForSQL(rowResult.get(key)))
+        }
+        return "insert into ${tableName} (${fieldNames.join(', ')}) values (${fieldValues.join(', ')})"
+    }
+
+    String escapeAndQuoteForSQL(String value) {
+        return "'${value.replaceAll('\'', '\'\'')}'"
     }
 
     private boolean transferSchemaVersionTable(DatabaseConfig srcDatabaseConfig, DatabaseConfig targetDatabaseConfig) {
@@ -108,7 +127,13 @@ class WrangleOperation implements Operation {
     }
 
     String initializeSchemaVersionTable(DatabaseConfig databaseConfig) {
-        new SchemaMigrator(databaseConfig, schemaConfig).initializeSchemaVersionTable()
+        def schemaMigrator = new SchemaMigrator(databaseConfig, schemaConfig)
+        schemaMigrator.initializeSchemaVersionTable()
+        return schemaMigrator.schemaTableName
+    }
+
+    String getSchemaVersionTableName(DatabaseConfig databaseConfig) {
+        return new SchemaMigrator(databaseConfig, schemaConfig).schemaTableName
     }
 
     private boolean doComparison(DatabaseConfig srcDatabaseConfig, DatabaseConfig targetDatabaseConfig) {
