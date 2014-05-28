@@ -94,7 +94,7 @@ class PublishOperation implements Operation {
         }
 
         try {
-            comparisonAction.call(dbServerConfig)
+            comparisonAction.call(dbConfig)
         } finally {
             if (hasDatabaseBeenCreated) {
                 if (!databaseClient.deleteDatabase(dbConfig)) {

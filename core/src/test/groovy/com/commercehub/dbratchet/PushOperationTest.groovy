@@ -2,12 +2,13 @@ package com.commercehub.dbratchet
 
 import static org.junit.Assume.assumeTrue
 
+import com.commercehub.dbratchet.databases.DatabaseClient
 import com.commercehub.dbratchet.databases.DatabaseClientFactory
+import com.commercehub.dbratchet.databases.SchemaInformationService
 import com.commercehub.dbratchet.filestore.FileStore
 import com.commercehub.dbratchet.filestore.FileSystemFileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.redgate.SqlCompareSchemaDifferenceEngine
-import com.commercehub.dbratchet.util.SqlScriptRunner
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -15,11 +16,10 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 /**
- * Created by jaystgelais on 5/27/14.
+ * Created by jgelais on 5/28/2014.
  */
-class PullOperationTest {
-    static final String SETUP_SCRIPT_1 =
-            '/com/commercehub/dbratchet/schema/redgate/sample-redgate-schema-setup-script-1.sql'
+class PushOperationTest {
+    static final String SAMPLE_STUDENTS_SQL = '/com/commercehub/dbratchet/schema/redgate/dbo.Students.sql'
 
     @Rule
     @SuppressWarnings('PublicInstanceField')
@@ -51,15 +51,30 @@ class PullOperationTest {
         FileStore fileStore = new FileSystemFileStore(folder.newFolder())
         SchemaConfig schemaConfig = new SchemaConfig(fileStore)
         initSchemaStore(schemaConfig)
+        File studentsSql = fileStore.getFile('redgate-schema/Tables/dbo.Students.sql')
+        if (!studentsSql.exists()) {
+            if (!studentsSql.parentFile.exists()) {
+                studentsSql.parentFile.mkdirs()
+            }
+            studentsSql.createNewFile()
+        }
+        populateStudentsSqlFromSample(studentsSql)
         databaseConfig = setupTransientDatabase()
-        SqlScriptRunner.runScript(databaseConfig, PullOperation.getResourceAsStream(SETUP_SCRIPT_1))
 
-        Operation pullOp = new PullOperation(schemaConfig, databaseConfig)
-        assert pullOp.configured
-        assert pullOp.run()
+        Operation pushOp = new PushOperation(schemaConfig, databaseConfig)
+        assert pushOp.configured
+        assert pushOp.run()
 
-        assert fileStore.getFile('redgate-schema/Tables/dbo.Students.sql').exists()
-        assert fileStore.getFile('redgate-schema/Tables/dbo.Courses.sql').exists()
+        DatabaseClient databaseClient = DatabaseClientFactory.getDatabaseClient(databaseConfig.vendor)
+        SchemaInformationService schemaInformationService = databaseClient.schemaInformationService
+        assert schemaInformationService.isTableInDatabase(databaseConfig, 'dbo.Students')
+    }
+
+    private populateStudentsSqlFromSample(File studentsSql) {
+        OutputStream outputStream = studentsSql.newOutputStream()
+        outputStream.write(PushOperation.getResourceAsStream(SAMPLE_STUDENTS_SQL).bytes)
+        outputStream.flush()
+        outputStream.close()
     }
 
     private DatabaseConfig setupTransientDatabase() {
