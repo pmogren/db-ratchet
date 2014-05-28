@@ -77,13 +77,19 @@ class WrangleOperation implements Operation {
     }
 
     boolean scriptSchemaVersionLog(DatabaseConfig databaseConfig) {
-        outputScriptFile.append(SchemaMigrator.getSchemaVersionTableCreateScript(dbConfig.vendor))
         String tableName = getSchemaVersionTableName(databaseConfig)
+        scriptCreateSchemaVersionTable(tableName)
         databaseClient.getSql(databaseConfig).dataSet(tableName).rows().each { row ->
             String insertSQL = writeInsertStatement(tableName, row)
             outputScriptFile.append("${insertSQL}\n")
         }
         return true
+    }
+
+    private void scriptCreateSchemaVersionTable(String tableName) {
+        SchemaMigrator.getSchemaVersionTableCreateScript(dbConfig.vendor).eachLine { line ->
+            outputScriptFile.append(line.replaceAll('\\$\\{schema\\}', 'dbo').replaceAll('\\$\\{table\\}', tableName))
+        }
     }
 
     @SuppressWarnings('DuplicateStringLiteral')
