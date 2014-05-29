@@ -79,6 +79,7 @@ final class Version implements Comparable<Version> {
         return "V${toString()}__rollback.sql"
     }
 
+    // TODO Fix this so that it uses FileStore
     File getVersionDir() {
         File versionDir = new File( versionsDir, "${toString()}")
         versionDir.mkdirs()
