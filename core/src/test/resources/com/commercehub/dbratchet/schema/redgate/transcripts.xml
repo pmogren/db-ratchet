@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <dbo.Students student_id="1" first_name="John" last_name="Smith"/>
+  <dbo.Courses course_id="1" name="Biology 101"/>
+  <dbo.Courses course_id="2" name="Chemistry 101"/>
+  <dbo.CourseOffering course_offering_id="1" course_id="1" year="2013" semester="F"/>
+  <dbo.CourseOffering course_offering_id="2" course_id="2" year="2014" semester="S"/>
+  <dbo.CourseEnrollment course_enrollment_id="1" course_offering_id="1" student_id="1" final_grade="0.86"/>
+  <dbo.CourseEnrollment course_enrollment_id="2" course_offering_id="2" student_id="1" final_grade="0.90"/>
+  <dbo.Tests test_id="1" course_offering_id="1" test_index="1" weight="0.40"/>
+  <dbo.Tests test_id="2" course_offering_id="1" test_index="2" weight="0.60"/>
+  <dbo.Tests test_id="3" course_offering_id="2" test_index="1" weight="0.20"/>
+  <dbo.Tests test_id="4" course_offering_id="2" test_index="2" weight="0.40"/>
+  <dbo.Tests test_id="5" course_offering_id="2" test_index="3" weight="0.40"/>
+  <dbo.TestScores test_score_id="1" test_id="1" course_enrollment_id="1" score="0.80"/>
+  <dbo.TestScores test_score_id="2" test_id="2" course_enrollment_id="1" score="0.90"/>
+  <dbo.TestScores test_score_id="3" test_id="3" course_enrollment_id="2" score="0.70"/>
+  <dbo.TestScores test_score_id="4" test_id="4" course_enrollment_id="2" score="0.90"/>
+  <dbo.TestScores test_score_id="5" test_id="5" course_enrollment_id="2" score="0.80"/>
+</dataset>

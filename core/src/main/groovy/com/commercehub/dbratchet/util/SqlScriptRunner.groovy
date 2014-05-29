@@ -15,7 +15,7 @@ import groovy.sql.Sql
 class SqlScriptRunner {
 
     static boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
-        Sql sql = getSql(dbConfig)
+        Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
         try {
             parseScriptIntoTransactions(scriptFile).each { sqlString->
                 sql.execute(sqlString)
