@@ -13,6 +13,7 @@ import com.commercehub.dbratchet.filestore.FileSystemFileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.redgate.SqlCompareSchemaDifferenceEngine
 import com.commercehub.dbratchet.util.SqlScriptRunner
+import groovy.sql.Sql
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -73,7 +74,35 @@ class MSSQLDataMigratorTest {
         assert migrateOp.configured
         assert migrateOp.run()
 
-        // TODO write deeper assertions
+        Sql sql
+        try {
+            sql = DatabaseClientFactory.getDatabaseClient(databaseConfig.vendor).getSql(databaseConfig)
+            def results = sql.rows('''
+                select s.first_name, s.last_name, c.name as 'course', co.year, co.semester, ce.final_grade
+                from dbo.Students s
+                left join dbo.CourseEnrollment ce on s.student_id = ce.student_id
+                left join dbo.CourseOffering co on co.course_offering_id = ce.course_offering_id
+                left join dbo.Courses c on c.course_id = co.course_id
+                order by co.year asc
+            ''')
+            assert results.size() == 2
+            assert results[0].first_name == 'John'
+            assert results[0].last_name == 'Smith'
+            assert results[0].course == 'Biology 101'
+            assert results[0].year == '2013'
+            assert results[0].semester == 'F'
+            assert results[0].final_grade == '0.86'
+            assert results[1].first_name == 'John'
+            assert results[1].last_name == 'Smith'
+            assert results[1].course == 'Chemistry 101'
+            assert results[1].year == '2014'
+            assert results[1].semester == 'S'
+            assert results[1].final_grade == '0.90'
+        } finally {
+            if (sql) {
+                sql.close()
+            }
+        }
     }
 
     private void populateFileFromResource(FileStore fileStore, String filePath, URL resource) {
