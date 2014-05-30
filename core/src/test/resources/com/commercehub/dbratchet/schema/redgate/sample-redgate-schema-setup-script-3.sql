@@ -4,7 +4,7 @@ BEGIN TRANSACTION
 GO
 CREATE TABLE [dbo].[Tests]
 (
-[test_id] [bigint] NOT NULL IDENTITY(1, 1),
+[test_id] [bigint] NOT NULL,
 [course_offering_id] [bigint] NOT NULL,
 [test_index] [int] NOT NULL,
 [weight] [decimal] (3, 2) NOT NULL
@@ -21,7 +21,7 @@ BEGIN TRANSACTION
 GO
 CREATE TABLE [dbo].[TestScores]
 (
-[test_score_id] [bigint] NOT NULL IDENTITY(1, 1),
+[test_score_id] [bigint] NOT NULL,
 [test_id] [bigint] NOT NULL,
 [course_enrollment_id] [bigint] NOT NULL,
 [score] [decimal] (3, 2) NOT NULL

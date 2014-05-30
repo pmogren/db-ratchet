@@ -4,7 +4,7 @@ BEGIN TRANSACTION
 GO
 CREATE TABLE [dbo].[CourseOffering]
 (
-[course_offering_id] [bigint] NOT NULL IDENTITY(1, 1),
+[course_offering_id] [bigint] NOT NULL,
 [course_id] [bigint] NOT NULL,
 [year] [int] NOT NULL,
 [semester] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
@@ -21,7 +21,7 @@ BEGIN TRANSACTION
 GO
 CREATE TABLE [dbo].[CourseEnrollment]
 (
-[course_enrollment_id] [bigint] NOT NULL IDENTITY(1, 1),
+[course_enrollment_id] [bigint] NOT NULL,
 [course_offering_id] [bigint] NOT NULL,
 [student_id] [bigint] NOT NULL
 )
