@@ -55,36 +55,16 @@ final class Version implements Comparable<Version> {
         pointVersion = 0
     }
 
-    File getFullBuildScriptFile() {
-        return new File(versionDir, fullBuildScriptName)
-    }
-
-    File getUpgradeScriptFile() {
-        return new File(versionDir, upgradeScriptName)
-    }
-
-    File getRollbackScriptFile() {
-        return new File(versionDir, rollbackScriptName)
-    }
-
     String getFullBuildScriptName() {
-        return "V${toString()}__fullbuild.sql"
+        return "V${this.toString()}__fullbuild.sql"
     }
 
     String getUpgradeScriptName() {
-        return "V${toString()}__upgrade.sql"
+        return "V${this.toString()}__upgrade.sql"
     }
 
     String getRollbackScriptName() {
-        return "V${toString()}__rollback.sql"
-    }
-
-    // TODO Fix this so that it uses FileStore
-    File getVersionDir() {
-        File versionDir = new File( versionsDir, "${toString()}")
-        versionDir.mkdirs()
-
-        return versionDir
+        return "V${this.toString()}__rollback.sql"
     }
 
     File getVersionsDir() {

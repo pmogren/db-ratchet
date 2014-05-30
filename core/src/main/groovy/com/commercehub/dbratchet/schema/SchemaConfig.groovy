@@ -45,6 +45,18 @@ class SchemaConfig {
         return (versions.isEmpty()) ? new Version(0,0,0) : versions.last()
     }
 
+    File getVersionFullBuildScriptFile(Version version) {
+        return fileStore.getFile("${Version.VERSIONS_DIR}/${version.toString()}/${version.fullBuildScriptName}")
+    }
+
+    File getVersionUpgradeScriptFile(Version version) {
+        return fileStore.getFile("${Version.VERSIONS_DIR}/${version.toString()}/${version.upgradeScriptName}")
+    }
+
+    File getVersionRollbackScriptFile(Version version) {
+        return fileStore.getFile("${Version.VERSIONS_DIR}/${version.toString()}/${version.rollbackScriptName}")
+    }
+
     /*
      * Suppressing this CodeNarc check here. 2 isn't so much a magic number as it is the minimum collection
      * size for there to be a next to last element in a list.

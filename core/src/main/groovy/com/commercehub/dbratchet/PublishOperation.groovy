@@ -70,7 +70,7 @@ class PublishOperation implements Operation {
 
     boolean generateFullBuildScript(Version version) {
         return performComparisonWithTransientDB { dbConfigWithDatabase->
-            File outputScriptFile = version.fullBuildScriptFile
+            File outputScriptFile = schemaConfig.getVersionFullBuildScriptFile(version)
             outputScriptFile.createNewFile()
             SchemaDifferenceEngine sde = schemaDifferenceEngineFactory.getSchemaDifferenceEngine(schemaConfig)
             sde.with {
@@ -110,7 +110,7 @@ class PublishOperation implements Operation {
     boolean generateUpgradeScript(Version version, Version previousVersion) {
         return performComparisonWithTransientDB { dbConfigWithDatabase->
             applyFullBuildScriptToDatabase(previousVersion, dbConfigWithDatabase)
-            File outputScriptFile = version.upgradeScriptFile
+            File outputScriptFile = schemaConfig.getVersionUpgradeScriptFile(version)
             outputScriptFile.createNewFile()
             SchemaDifferenceEngine sde = schemaDifferenceEngineFactory.getSchemaDifferenceEngine(schemaConfig)
             sde.with {
@@ -126,7 +126,7 @@ class PublishOperation implements Operation {
     boolean generateRollbackScript(Version version, Version previousVersion) {
         return performComparisonWithTransientDB { dbConfigWithDatabase->
             applyFullBuildScriptToDatabase(previousVersion, dbConfigWithDatabase)
-            File outputScriptFile = version.rollbackScriptFile
+            File outputScriptFile = schemaConfig.getVersionRollbackScriptFile(version)
             outputScriptFile.createNewFile()
             SchemaDifferenceEngine sde = schemaDifferenceEngineFactory.getSchemaDifferenceEngine(schemaConfig)
             sde.with {
@@ -140,15 +140,15 @@ class PublishOperation implements Operation {
     }
 
     boolean generateUpgradeScriptFromFullBuild(Version version) {
-        File outputScriptFile = version.upgradeScriptFile
+        File outputScriptFile = schemaConfig.getVersionUpgradeScriptFile(version)
         outputScriptFile.createNewFile()
-        outputScriptFile.text = version.fullBuildScriptFile.text
+        outputScriptFile.text = schemaConfig.getVersionFullBuildScriptFile(version).text
 
         return true
     }
 
     void applyFullBuildScriptToDatabase(Version version, DatabaseConfig dbConfigWithDatabase) {
-        SqlScriptRunner.runScript(dbConfigWithDatabase, version.fullBuildScriptFile)
+        SqlScriptRunner.runScript(dbConfigWithDatabase, schemaConfig.getVersionFullBuildScriptFile(version))
     }
 
     DatabaseConfig getDatabaseConfgOnServer(DatabaseConfig databaseServerConfig, String dbName) {
