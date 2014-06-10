@@ -17,3 +17,6 @@ The build script for db-ratchet runs Cobertura to capture code coverage data. We
 [Cobertura Plugin](https://github.com/stevesaliman/gradle-cobertura-plugin). To capture code coverage data run the **cobertura** task in gradle. Due to an issue with
 the current version of this plugin, cobertura will print a stacktrace to the console during instrumentation claiming that it can't load several classes in the project.
 Despite this noise in the console, instrumentation will complete successfully and a code coverage report will be generated. For now, these stack traces can be ignored.
+
+---
+*Interested in working with Markdown? Get started with this Chrome extension for viewing .md files: [Markdown Preview](https://chrome.google.com/webstore/detail/markdown-preview/jmchmkecamhbiokiopfpnfgbidieafmd)*

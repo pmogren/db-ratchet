@@ -21,7 +21,7 @@ The plugin adds the following tasks to the build:
 - **package**: This tasks bundles the db-ratchet-core library and it's dependencies into a *Fat-Jar* along with your
 databases schema version scripts, static scripts and data packages.
 - **build**: This task does nothing and depends on package. It's here for convenience when configuring a database build
-as a sub-project in a multi-project gradle build. This way when you run a *build**task to compile your application this
+as a sub-project in a multi-project gradle build. This way when you run a *build* task to compile your application this
 jar will be produced as well.
 
 The *Fat-Jar* produced by this plugin can be used as follows:
@@ -48,3 +48,6 @@ The db-ratchet gradle plaugin supports setting the version for the db-ratchet-co
     dbRatchet {
         dbRatchetVersion = '0.2.1'
     }
+
+---
+*Interested in working with Markdown? Get started with this Chrome extension for viewing .md files: [Markdown Preview](https://chrome.google.com/webstore/detail/markdown-preview/jmchmkecamhbiokiopfpnfgbidieafmd)*
