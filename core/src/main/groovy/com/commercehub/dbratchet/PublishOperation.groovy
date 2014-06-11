@@ -71,6 +71,7 @@ class PublishOperation implements Operation {
     boolean generateFullBuildScript(Version version) {
         return performComparisonWithTransientDB { dbConfigWithDatabase->
             File outputScriptFile = schemaConfig.getVersionFullBuildScriptFile(version)
+            outputScriptFile.parentFile.mkdirs()
             outputScriptFile.createNewFile()
             SchemaDifferenceEngine sde = schemaDifferenceEngineFactory.getSchemaDifferenceEngine(schemaConfig)
             sde.with {
@@ -111,6 +112,7 @@ class PublishOperation implements Operation {
         return performComparisonWithTransientDB { dbConfigWithDatabase->
             applyFullBuildScriptToDatabase(previousVersion, dbConfigWithDatabase)
             File outputScriptFile = schemaConfig.getVersionUpgradeScriptFile(version)
+            outputScriptFile.parentFile.mkdirs()
             outputScriptFile.createNewFile()
             SchemaDifferenceEngine sde = schemaDifferenceEngineFactory.getSchemaDifferenceEngine(schemaConfig)
             sde.with {
@@ -127,6 +129,7 @@ class PublishOperation implements Operation {
         return performComparisonWithTransientDB { dbConfigWithDatabase->
             applyFullBuildScriptToDatabase(previousVersion, dbConfigWithDatabase)
             File outputScriptFile = schemaConfig.getVersionRollbackScriptFile(version)
+            outputScriptFile.parentFile.mkdirs()
             outputScriptFile.createNewFile()
             SchemaDifferenceEngine sde = schemaDifferenceEngineFactory.getSchemaDifferenceEngine(schemaConfig)
             sde.with {

@@ -89,15 +89,15 @@ class MSSQLDataMigratorTest {
             assert results[0].first_name == 'John'
             assert results[0].last_name == 'Smith'
             assert results[0].course == 'Biology 101'
-            assert results[0].year == '2013'
+            assert results[0].year == 2013
             assert results[0].semester == 'F'
-            assert results[0].final_grade == '0.86'
+            assert results[0].final_grade == 0.86
             assert results[1].first_name == 'John'
             assert results[1].last_name == 'Smith'
             assert results[1].course == 'Chemistry 101'
-            assert results[1].year == '2014'
+            assert results[1].year == 2014
             assert results[1].semester == 'S'
-            assert results[1].final_grade == '0.90'
+            assert results[1].final_grade == 0.90
         } finally {
             if (sql) {
                 sql.close()
