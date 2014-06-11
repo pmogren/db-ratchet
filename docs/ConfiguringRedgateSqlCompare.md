@@ -2,6 +2,30 @@
 This document covers what additional configurations db-ratchet supports when using the Redgate SQL Compare schema 
 difference engine.
 
+## Redgate SQL Compare Schema Store
+The Redgate SQL Compare based Schema Difference Engine store schema and configuration in the following two folders off
+the root of the database folder:
+
+1. **/redgate-schema**
+    
+    The contents of this folder are managed by SQLCompare when this folder is used as the value for on of 
+    the `/Scripts` switches. A typical layout will look something like this, with a .sql file for each schema element
+    stored in this repository. Changes to the SQLCompare filters from the default may result in a different structure.
+        
+        /redgate-schema
+            |-/Functions
+            |-/Security
+            |   |-/Schemas
+            |-/Stored Procedures
+            |-/Tables
+            |-RedGateDatabaseInfo.xml
+
+2. **/redgate-config**
+    
+    This folder contains Redgate SQLCompare specific configurations. Reasonable defaults are provided when running 
+    the `init` operation. Further information provided below on how to change these files to implement custom schema 
+    filtering.
+
 ## Ensuring db-ratchet finds SQLCompare.exe on your system
 db-ratchet will check for SQLCompare.exe in the following locations (in this order):
 
@@ -13,12 +37,12 @@ db-ratchet will check for SQLCompare.exe in the following locations (in this ord
 The Redgate SQL Compare schema difference engine supports two methods for filtering what schema elements are considered
 during comparison.
 
-1. `<db-dir>/redgate-config/filter.scpf`
+1. **/redgate-config/filter.scpf**
 
     This is redgate's XML based filter format. A sample starting point version of this file will be added to your schema
     repository by the  `init` operation. This file can be editted from within the SQL Compare GUI.
 
-2. `<db-dir>/redgate-config/file-filter-config.groovy`
+2. **/redgate-config/file-filter-config.groovy**
     
     Due to some limitations of SQL Compare's filtering capabilities as it relates to the `pull` operation, an
     additional mechanism is available to create whitelists and blacklists controling what files should be present after
