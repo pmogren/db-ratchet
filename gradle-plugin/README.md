@@ -43,10 +43,12 @@ The *Fat-Jar* produced by this plugin can be used as follows:
 
 ## Additional Configuration
 The db-ratchet gradle plaugin supports setting the version for the db-ratchet-core jar to bundle in the database 
-*Fat-Jar* by specifying the following property as part of the **dbRatchet** extension.
+*Fat-Jar* as well as what to name the jar by specifying the following properties as part of the **dbRatchet** 
+extension. Sensible defaults are provided for options left unspecified.
 
     dbRatchet {
         dbRatchetVersion = '0.2.1'
+        jarName = 'myawesomedb.jar'
     }
 
 ---
