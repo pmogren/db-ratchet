@@ -13,9 +13,6 @@ import org.flywaydb.core.api.FlywayException
 import groovy.sql.DataSet
 import groovy.sql.Sql
 
-/**
- * Created by jaystgelais on 5/24/14.
- */
 // TODO Write Unit Test
 // TODO Add this to the command line application
 class WrangleOperation implements Operation {
