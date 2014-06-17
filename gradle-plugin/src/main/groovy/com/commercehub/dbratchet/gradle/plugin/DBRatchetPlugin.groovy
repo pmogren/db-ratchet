@@ -10,7 +10,6 @@ import org.gradle.api.tasks.bundling.Jar
  */
 class DBRatchetPlugin implements Plugin<Project> {
 
-    public static final String DATABASE_JAR_TASK_NAME = 'databaseJar'
     public static final String BUILD_TASK_NAME = 'build'
     public static final String PACKAGE_TASK_NAME = 'package'
     public static final String DB_RATCHET_EXTENSION_NAME = 'dbRatchet'
@@ -39,6 +38,8 @@ class DBRatchetPlugin implements Plugin<Project> {
     }
 
     void populateTaskGraph(Project project) {
+        DBRatchetExtension extension = project.extensions.getByName(DB_RATCHET_EXTENSION_NAME)
+
         // package task
         project.tasks.create(name: PACKAGE_TASK_NAME, type: Jar)
         Jar packageTask = project.tasks.getByName(PACKAGE_TASK_NAME)
@@ -69,6 +70,11 @@ class DBRatchetPlugin implements Plugin<Project> {
             }
             packageTask.into(SCRIPTS_DIR) {
                 from "${project.projectDir}/${SCRIPTS_DIR}"
+            }
+        }
+        project.afterEvaluate {
+            if (extension.jarName) {
+                packageTask.archiveName = extension.jarName
             }
         }
 

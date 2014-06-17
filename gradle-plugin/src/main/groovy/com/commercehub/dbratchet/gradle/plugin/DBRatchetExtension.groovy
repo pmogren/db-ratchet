@@ -7,6 +7,7 @@ import org.gradle.api.Project
  */
 class DBRatchetExtension {
     String dbRatchetVersion = '0.2.1'
+    String jarName
 
     DBRatchetExtension(Project project) {
         project.logger.info "Creating db-ratchet extension for project ${project.name}"
