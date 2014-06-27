@@ -12,6 +12,8 @@ import groovy.sql.Sql
  */
 class MSSQLDatabaseClient implements DatabaseClient {
     public static final String JDBC_DRIVER_CLASS = 'net.sourceforge.jtds.jdbc.Driver'
+    String rowCountQuery = 'Select count(1) from %TABLE%'
+
     static {
         ClassLoader.systemClassLoader.loadClass(JDBC_DRIVER_CLASS)
     }
@@ -57,4 +59,5 @@ class MSSQLDatabaseClient implements DatabaseClient {
 
         return jdbcUrl
     }
+
 }

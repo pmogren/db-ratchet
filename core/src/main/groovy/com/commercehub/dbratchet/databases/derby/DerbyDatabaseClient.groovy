@@ -14,6 +14,8 @@ import java.sql.SQLSyntaxErrorException
  */
 class DerbyDatabaseClient implements DatabaseClient {
     public static final String JDBC_DRIVER_CLASS = 'org.apache.derby.jdbc.EmbeddedDriver'
+    String rowCountQuery = 'Select count(1) from %TABLE%'
+
     static {
         ClassLoader.systemClassLoader.loadClass(JDBC_DRIVER_CLASS)
     }

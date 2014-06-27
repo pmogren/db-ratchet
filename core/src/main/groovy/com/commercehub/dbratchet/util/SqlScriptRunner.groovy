@@ -14,7 +14,6 @@ import groovy.sql.Sql
 @SuppressWarnings('DuplicateStringLiteral')
 class SqlScriptRunner {
 
-    static final String BASE_COUNT_QUERY = 'Select count(1) from '
 
     static boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
         Sql sql = getSql(dbConfig)
@@ -73,13 +72,15 @@ class SqlScriptRunner {
         return true
     }
 
-    static runCountQuery(DatabaseConfig dbConfig, String table) {
+    static int runCountQuery(DatabaseConfig dbConfig, String table) {
         Sql sql = getSql(dbConfig)
+        String query = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor)
+                .rowCountQuery.replace('%TABLE%', table)
 
         try {
-            return sql.firstRow(BASE_COUNT_QUERY + table)[0]
+            return (int) sql.firstRow(query)[0]
         } catch (Exception e) {
-            System.err.println "Error running SQL Commmand: ${BASE_COUNT_QUERY + table}"
+            System.err.println "Error running SQL Commmand: ${query} on table ${table}"
             e.printStackTrace()
         }
 
