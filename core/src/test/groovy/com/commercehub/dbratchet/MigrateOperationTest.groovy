@@ -13,6 +13,10 @@ import groovy.sql.Sql
 class MigrateOperationTest extends GroovyTestCase {
 
     void testDefaultPath() {
+        PrintStream oldErr = System.err
+        ByteArrayOutputStream err = new ByteArrayOutputStream()
+        System.setErr(new PrintStream(err))
+
         DatabaseConfig databaseConfig = getDatabaseConfig('testDefaultPathForMigrationOperationTest')
         FileStore fileStore = new ClasspathFileStore('/com/commercehub/dbratchet/sampledata/')
         setupDatabaseSchema(databaseConfig)
@@ -23,6 +27,10 @@ class MigrateOperationTest extends GroovyTestCase {
 
         Sql sql = DatabaseClientFactory.getDatabaseClient(databaseConfig.vendor).getSql(databaseConfig)
         assert sql.rows('select * from COURSES').size() > 0
+        assert err.toString().trim() == '0 rows migrated for table EMPTY. Are your packages are correctly configured?'
+        assert sql.rows('select * from EMPTY').size() == 0
+
+        System.setErr(oldErr)
     }
 
     private void setupDatabaseSchema(DatabaseConfig databaseConfig) {

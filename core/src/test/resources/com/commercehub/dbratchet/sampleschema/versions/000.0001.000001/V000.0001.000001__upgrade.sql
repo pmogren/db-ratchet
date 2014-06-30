@@ -9,3 +9,7 @@ create table ENROLLMENT (
     STUDENTID int not null,
     FINALGRADE decimal
 );
+
+create table EMPTY (
+    EMPTYID int not null
+);

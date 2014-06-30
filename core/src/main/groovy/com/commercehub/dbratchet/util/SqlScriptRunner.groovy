@@ -14,10 +14,11 @@ import groovy.sql.Sql
 @SuppressWarnings('DuplicateStringLiteral')
 class SqlScriptRunner {
 
+
     static boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
-        Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
+        Sql sql = getSql(dbConfig)
         try {
-            parseScriptIntoTransactions(scriptFile).each { sqlString->
+            parseScriptIntoTransactions(scriptFile).each { sqlString ->
                 sql.execute(sqlString)
             }
         } catch (Exception e) {
@@ -38,9 +39,9 @@ class SqlScriptRunner {
     }
 
     static boolean runScript(DatabaseConfig dbConfig, InputStream scriptContents) {
-        Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
+        Sql sql = getSql(dbConfig)
         try {
-            parseScriptIntoTransactions(scriptContents).each { sqlString->
+            parseScriptIntoTransactions(scriptContents).each { sqlString ->
                 sql.execute(sqlString)
             }
         } catch (Exception e) {
@@ -57,7 +58,7 @@ class SqlScriptRunner {
     }
 
     static boolean runCommand(DatabaseConfig dbConfig, String sqlString) {
-        Sql sql = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
+        Sql sql = getSql(dbConfig)
         try {
             sql.execute(sqlString)
         } catch (Exception e) {
@@ -71,10 +72,29 @@ class SqlScriptRunner {
         return true
     }
 
+    static int runCountQuery(DatabaseConfig dbConfig, String table) {
+        Sql sql = getSql(dbConfig)
+        String query = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor)
+                .rowCountQuery.replace('%TABLE%', table)
+
+        try {
+            return (int) sql.firstRow(query)[0]
+        } catch (Exception e) {
+            System.err.println "Error running SQL Commmand: ${query} on table ${table}"
+            e.printStackTrace()
+        }
+
+        return 0
+    }
+
+    private static Sql getSql(DatabaseConfig dbConfig) {
+        return DatabaseClientFactory.getDatabaseClient(dbConfig.vendor).getSql(dbConfig)
+    }
+
     private static List<String> parseScriptIntoTransactions(File scriptFile) {
         List<String> commandList = [] as Queue<String>
         String currentCommand = ''
-        scriptFile.eachLine { line->
+        scriptFile.eachLine { line ->
             if ('GO' == (line)) {
                 commandList.add(currentCommand)
                 currentCommand = ''
@@ -93,7 +113,7 @@ class SqlScriptRunner {
     private static List<String> parseScriptIntoTransactions(InputStream sqlInputStream) {
         List<String> commandList = [] as Queue<String>
         String currentCommand = ''
-        sqlInputStream.eachLine { line->
+        sqlInputStream.eachLine { line ->
             if ('GO' == (line)) {
                 commandList.add(currentCommand)
                 currentCommand = ''

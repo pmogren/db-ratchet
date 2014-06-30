@@ -23,4 +23,6 @@ interface DatabaseClient {
 
     String getJdbcUrl(DatabaseConfig databaseConfig)
 
+    String getRowCountQuery()
+
 }
