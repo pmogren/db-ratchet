@@ -34,7 +34,6 @@ class BuildOperation implements Operation {
 
         boolean returnVal = true
 
-
         DatabaseClient databaseClient = DatabaseClientFactory.getDatabaseClient(dbConfig.vendor)
         if (!databaseClient.schemaInformationService.doesDatabaseExist(dbConfig)) {
             returnVal &= databaseClient.createDatabase(dbConfig)

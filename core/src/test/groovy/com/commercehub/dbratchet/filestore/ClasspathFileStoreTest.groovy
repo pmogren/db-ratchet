@@ -2,14 +2,13 @@ package com.commercehub.dbratchet.filestore
 
 import com.commercehub.dbratchet.util.FileUtil
 
-
 /**
  * Created by jgelais on 5/16/2014.
  */
 class ClasspathFileStoreTest extends GroovyTestCase {
-    static final String RESOURCE_BASE = 'com/commercehub/dbratchet/filestore'
-    static final String TEST_RESOURCE = 'test-resource.txt'
-    static final String TEST_RESOURCE_CONTENT = 'This is some text.'
+    private static final String RESOURCE_BASE = 'com/commercehub/dbratchet/filestore'
+    private static final String TEST_RESOURCE = 'test-resource.txt'
+    private static final String TEST_RESOURCE_CONTENT = 'This is some text.'
 
     void testGetFileInputStream() {
         FileStore filestore = new ClasspathFileStore()

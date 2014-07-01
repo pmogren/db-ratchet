@@ -18,7 +18,7 @@ import org.junit.rules.TemporaryFolder
  * Created by jaystgelais on 5/27/14.
  */
 class PullOperationTest {
-    static final String SETUP_SCRIPT_1 =
+    private static final String SETUP_SCRIPT_1 =
             '/com/commercehub/dbratchet/schema/redgate/sample-redgate-schema-setup-script-1.sql'
 
     @Rule

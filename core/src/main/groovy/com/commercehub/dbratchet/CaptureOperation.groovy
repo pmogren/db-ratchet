@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.Level
 
-
-
 /**
  * Created with IntelliJ IDEA.
  * User: jgelais
@@ -36,7 +34,7 @@ class CaptureOperation implements Operation {
     boolean run() {
         silenceDbUnitLogger()
         DataPackageConfig dataPackageConfig = DataPackageConfig.load(fileStore)
-        dataPackageConfig.packages.each { dataPackage->
+        dataPackageConfig.packages.each { dataPackage ->
             capturePackage(dataPackage)
         }
 
@@ -56,7 +54,7 @@ class CaptureOperation implements Operation {
     private void capturePackage(DataPackage dataPackage) {
         IDatabaseConnection connection = databaseConnection
         QueryDataSet partialDataSet = new QueryDataSet(connection)
-        dataPackage.tables.each { tableName->
+        dataPackage.tables.each { tableName ->
             partialDataSet.addTable("${tableName}", "SELECT * FROM ${tableName}")
         }
         FlatXmlDataSet.write(partialDataSet, dataPackage.dataOutputStream)

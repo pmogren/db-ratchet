@@ -52,7 +52,7 @@ class FileSystemFileStore implements FileStore {
             throw new IllegalArgumentException("path [${path}] is not a directory!")
         }
         Pattern pattern = FileUtil.convertWildcardToRegex(filePattern)
-        rootDir.eachFileRecurse(FileType.FILES) { file->
+        rootDir.eachFileRecurse(FileType.FILES) { file ->
             if (pattern.matcher(file.name).matches()) {
                 list << file.name
             }

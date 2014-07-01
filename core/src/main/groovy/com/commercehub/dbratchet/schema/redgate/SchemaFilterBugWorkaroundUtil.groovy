@@ -13,8 +13,6 @@ class SchemaFilterBugWorkaroundUtil {
     final Map<String, List<String>> allowedFilePatterns = ['Schemas': ['.*\\.sql'],
             'default': ['.*\\.sql', 'RedGateDatabaseInfo.xml']]
 
-
-
     /**
      * This method works around a bug where the /filter switch on SQLCompare does not actually apply your
      * filter. This bug is tracked under [SC-6447]
@@ -22,7 +20,7 @@ class SchemaFilterBugWorkaroundUtil {
      * @param schemaDir
      */
     void removeFilteredFiles(File schemaDir) {
-        schemaDir.listFiles().each { dir->
+        schemaDir.listFiles().each { dir ->
             if (dir.isDirectory() && !allowedTopLevelSchemaFolders.contains(dir.name)) {
                 dir.deleteDir()
             } else {
@@ -34,7 +32,7 @@ class SchemaFilterBugWorkaroundUtil {
     }
 
     private void removeSubFolders(File dir) {
-        dir.listFiles().each { subDir->
+        dir.listFiles().each { subDir ->
             if (subDir.isDirectory() && !allowedSchemaSubFolders.get(dir.name).contains(subDir.name)) {
                 subDir.deleteDir()
             } else {
@@ -46,10 +44,10 @@ class SchemaFilterBugWorkaroundUtil {
     }
 
     private void purgeUnwantedFilesFromDir(File dir) {
-        dir.listFiles().each { file->
+        dir.listFiles().each { file ->
             if (file.isFile()) {
                 boolean matchesPattern = false
-                getAllowedFileNamePatternsForDir(dir).each { pattern->
+                getAllowedFileNamePatternsForDir(dir).each { pattern ->
                     matchesPattern = matchesPattern || file.name.matches(pattern)
                 }
 

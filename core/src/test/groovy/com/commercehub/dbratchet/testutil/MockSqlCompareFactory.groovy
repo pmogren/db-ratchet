@@ -10,7 +10,7 @@ import com.commercehub.dbratchet.schema.redgate.SqlCompareFactory
  * Time: 4:55 PM
  */
 class MockSqlCompareFactory extends SqlCompareFactory {
-    List<String> loggedSQLCompareCommands = [] as List<String>
+    List<String> loggedSQLCompareCommands = []
     SqlCompare newSqlCompare() {
         return new MockSqlCompare(this)
     }

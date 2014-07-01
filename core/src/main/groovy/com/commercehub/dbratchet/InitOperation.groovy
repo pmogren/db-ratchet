@@ -45,11 +45,7 @@ class InitOperation implements Operation {
 
     @Override
     boolean isConfigured() {
-        if (!sdeFactory) {
-            return false
-        }
-
-        return true
+        return sdeFactory
     }
 
     boolean initSchemaStore() {
@@ -63,7 +59,7 @@ class InitOperation implements Operation {
         File destFile = schemaConfig.fileStore.getFile("${SchemaConfig.DATA_DIR}/data-packages.xml")
         destFile.createNewFile()
 
-        this.getClass().getResource('/templates/data-packages.xml').withInputStream { is->
+        this.getClass().getResource('/templates/data-packages.xml').withInputStream { is ->
             destFile << is
         }
     }

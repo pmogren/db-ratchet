@@ -69,7 +69,7 @@ class PublishOperation implements Operation {
     }
 
     boolean generateFullBuildScript(Version version) {
-        return performComparisonWithTransientDB { dbConfigWithDatabase->
+        return performComparisonWithTransientDB { dbConfigWithDatabase ->
             File outputScriptFile = schemaConfig.getVersionFullBuildScriptFile(version)
             outputScriptFile.parentFile.mkdirs()
             outputScriptFile.createNewFile()
@@ -109,7 +109,7 @@ class PublishOperation implements Operation {
     }
 
     boolean generateUpgradeScript(Version version, Version previousVersion) {
-        return performComparisonWithTransientDB { dbConfigWithDatabase->
+        return performComparisonWithTransientDB { dbConfigWithDatabase ->
             applyFullBuildScriptToDatabase(previousVersion, dbConfigWithDatabase)
             File outputScriptFile = schemaConfig.getVersionUpgradeScriptFile(version)
             outputScriptFile.parentFile.mkdirs()
@@ -126,7 +126,7 @@ class PublishOperation implements Operation {
     }
 
     boolean generateRollbackScript(Version version, Version previousVersion) {
-        return performComparisonWithTransientDB { dbConfigWithDatabase->
+        return performComparisonWithTransientDB { dbConfigWithDatabase ->
             applyFullBuildScriptToDatabase(previousVersion, dbConfigWithDatabase)
             File outputScriptFile = schemaConfig.getVersionRollbackScriptFile(version)
             outputScriptFile.parentFile.mkdirs()

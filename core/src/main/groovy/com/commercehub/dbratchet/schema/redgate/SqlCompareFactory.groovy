@@ -33,11 +33,7 @@ class SqlCompareFactory {
             return "${sqlCompareHome}${File.separator}${SQL_COMPARE_EXE}"
         }
 
-        if (isSqlCompareAtDefaultInstallLocation()) {
-            return "${DEFAULT_INSTALL_LOCATION}${SQL_COMPARE_EXE}"
-        }
-
-        return null
+        return isSqlCompareAtDefaultInstallLocation() ? "$DEFAULT_INSTALL_LOCATION$SQL_COMPARE_EXE" : null
     }
 
     boolean isSqlCompareOnPath() {

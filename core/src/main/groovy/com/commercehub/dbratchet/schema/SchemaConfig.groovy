@@ -33,7 +33,7 @@ class SchemaConfig {
     private List<Version> scanSchemaRootForPublishedVersions() {
         List<Version> returnList = [] as Queue<Version>
         fileStore.scanRecursivelyForFiles(Version.VERSIONS_DIR,
-                "${FLYWAY_MIGRATION_PREFIX}*${FLYWAY_MIGRATION_SUFFIX}").each { filename->
+                "${FLYWAY_MIGRATION_PREFIX}*${FLYWAY_MIGRATION_SUFFIX}").each { filename ->
             def versionString = filename[1..(filename.indexOf(FLYWAY_MIGRATION_SUFFIX) - 1)]
             returnList.add(new Version(versionString))
         }

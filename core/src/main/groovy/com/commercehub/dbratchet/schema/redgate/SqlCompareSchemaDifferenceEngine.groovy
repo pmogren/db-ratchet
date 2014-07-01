@@ -96,7 +96,7 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
         if (!filterFile.exists()) {
             filterFile.createNewFile()
 
-            this.getClass().getResource('/templates/redgate/filter.scpf').withInputStream { is->
+            this.getClass().getResource('/templates/redgate/filter.scpf').withInputStream { is ->
                 filterFile << is
             }
         }
@@ -104,7 +104,7 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
         if (!filterConfigFile.exists()) {
             filterConfigFile.createNewFile()
 
-            this.getClass().getResource('/templates/redgate/file-filter-config.groovy').withInputStream { is->
+            this.getClass().getResource('/templates/redgate/file-filter-config.groovy').withInputStream { is ->
                 filterConfigFile << is
             }
         }
@@ -125,7 +125,7 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
     private void processFileFilters() {
         if (filterConfigFile.exists()) {
             def config = new ConfigSlurper().parse(filterConfigFile.toURL())
-            config.filters.keySet().each { path->
+            config.filters.keySet().each { path ->
                 def filter = config.filters[path]
                 File filteredDir = new File(fileStoreDir, path)
                 if (filteredDir.exists()) {
@@ -142,12 +142,12 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
 
     private void doWhiteListFilter(File dir, def patterns) {
         def filesToKeep = []
-        patterns.each { pattern->
-            dir.eachFileMatch(FileUtil.convertWildcardToRegex(pattern)) { file->
+        patterns.each { pattern ->
+            dir.eachFileMatch(FileUtil.convertWildcardToRegex(pattern)) { file ->
                 filesToKeep.add(file)
             }
         }
-        dir.eachFile { file->
+        dir.eachFile { file ->
             if (!filesToKeep.contains(file)) {
                 file.delete()
             }
@@ -155,12 +155,11 @@ class SqlCompareSchemaDifferenceEngine implements SchemaDifferenceEngine {
     }
 
     private void doBlackListFilter(File dir, def patterns) {
-        patterns.each { pattern->
-            dir.eachFileMatch(FileUtil.convertWildcardToRegex(pattern)) { file->
+        patterns.each { pattern ->
+            dir.eachFileMatch(FileUtil.convertWildcardToRegex(pattern)) { file ->
                 file.delete()
             }
         }
     }
-
 
 }

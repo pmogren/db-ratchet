@@ -1,7 +1,5 @@
 package com.commercehub.dbratchet.schema.redgate
 
-import static org.junit.Assume.*
-
 import com.commercehub.dbratchet.InitOperation
 import com.commercehub.dbratchet.Operation
 import com.commercehub.dbratchet.TestConfig
@@ -9,6 +7,7 @@ import com.commercehub.dbratchet.filestore.FileStore
 import com.commercehub.dbratchet.filestore.FileSystemFileStore
 import com.commercehub.dbratchet.schema.SchemaConfig
 import com.commercehub.dbratchet.schema.Version
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -30,8 +29,8 @@ class SqlCompareSchemaDifferenceEngineTest {
     }
 
     private void assumptions() {
-        assumeTrue(TestConfig.isRedgateAvailable)
-        assumeTrue(TestConfig.isMSSQLAvailable)
+        Assume.assumeTrue(TestConfig.isRedgateAvailable)
+        Assume.assumeTrue(TestConfig.isMSSQLAvailable)
     }
 
     @Test

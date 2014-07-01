@@ -36,7 +36,7 @@ class ServerCredentialStore {
 
         def builder = new groovy.xml.MarkupBuilder(outputFile.newPrintWriter())
         builder.credentials {
-            credentials.keySet().each { alias->
+            credentials.keySet().each { alias ->
                 DatabaseConfig dbConfig = credentials.get(alias)
                 builder.'db-config'(alias: alias, server: dbConfig.server, vendor: dbConfig.vendor,
                         user: dbConfig.user, password: dbConfig.password)
@@ -48,7 +48,7 @@ class ServerCredentialStore {
         File inputFile = credentialStoreFile
         if (inputFile.exists()) {
             def xmlConfig = new XmlSlurper().parse(inputFile)
-            xmlConfig.'db-config'.each { dbConfigElement->
+            xmlConfig.'db-config'.each { dbConfigElement ->
                 String alias = dbConfigElement.@alias.text()
                 DatabaseConfig dbConfig = new DatabaseConfig()
                         .setServer(dbConfigElement.@server.text())
@@ -73,9 +73,9 @@ class ServerCredentialStore {
 
     @Override
     String toString() {
-        String str = ''
+        StringBuffer str = new StringBuffer()
         credentials.keySet().sort().each { key ->
-            str += "${key}: {${credentials.get(key)}}\n"
+            str.append("${key}: {${credentials.get(key)}}\n")
         }
         return str
     }

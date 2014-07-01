@@ -97,7 +97,6 @@ class SqlCompare {
         return switches
     }
 
-
     SqlCompare setFilter(String filter) {
         this.filter = filter
         return this

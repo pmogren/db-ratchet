@@ -24,11 +24,11 @@ import org.junit.rules.TemporaryFolder
  * Created by jgelais on 5/29/2014.
  */
 class MSSQLDataMigratorTest {
-    static final String SETUP_SCRIPT_1 =
+    private static final String SETUP_SCRIPT_1 =
             '/com/commercehub/dbratchet/schema/redgate/sample-redgate-schema-setup-script-1.sql'
-    static final String SETUP_SCRIPT_2 =
+    private static final String SETUP_SCRIPT_2 =
             '/com/commercehub/dbratchet/schema/redgate/sample-redgate-schema-setup-script-2.sql'
-    static final String SETUP_SCRIPT_3 =
+    private static final String SETUP_SCRIPT_3 =
             '/com/commercehub/dbratchet/schema/redgate/sample-redgate-schema-setup-script-3.sql'
 
     @Rule

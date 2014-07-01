@@ -19,7 +19,7 @@ import org.junit.rules.TemporaryFolder
  * Created by jgelais on 5/28/2014.
  */
 class PushOperationTest {
-    static final String SAMPLE_STUDENTS_SQL = '/com/commercehub/dbratchet/schema/redgate/dbo.Students.sql'
+    private static final String SAMPLE_STUDENTS_SQL = '/com/commercehub/dbratchet/schema/redgate/dbo.Students.sql'
 
     @Rule
     @SuppressWarnings('PublicInstanceField')

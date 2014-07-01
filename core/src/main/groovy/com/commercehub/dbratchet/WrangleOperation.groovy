@@ -15,6 +15,12 @@ import groovy.sql.Sql
 
 // TODO Write Unit Test
 // TODO Add this to the command line application
+/**
+ * Created with IntelliJ IDEA.
+ * User: jgelais
+ * Date: 9/17/13
+ * Time: 4:59 PM
+ */
 class WrangleOperation implements Operation {
     final String name = 'wrangle'
 

@@ -22,7 +22,7 @@ class DataPackageConfig {
     static DataPackageConfig load(FileStore fileStore) {
         DataPackageConfig dataPackageConfig = new DataPackageConfig()
         def xmlConfig = new XmlSlurper().parse(fileStore.getFileInputStream('data/data-packages.xml'))
-        xmlConfig.package.each { packageElement->
+        xmlConfig.package.each { packageElement ->
             DataPackage dataPackage = new DataPackage(fileStore)
             if (packageElement.@name.size() > 0) {
                 dataPackage.setName(packageElement.@name.text())
@@ -35,7 +35,7 @@ class DataPackageConfig {
                 }
             }
 
-            packageElement.table.each { tableElement->
+            packageElement.table.each { tableElement ->
                 dataPackage.tables.add(tableElement.text())
             }
 

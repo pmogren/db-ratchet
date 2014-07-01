@@ -14,7 +14,6 @@ import groovy.sql.Sql
 @SuppressWarnings('DuplicateStringLiteral')
 class SqlScriptRunner {
 
-
     static boolean runScript(DatabaseConfig dbConfig, File scriptFile) {
         Sql sql = getSql(dbConfig)
         try {

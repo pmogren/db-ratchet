@@ -14,7 +14,6 @@ import com.commercehub.dbratchet.util.SqlScriptRunner
 class MigrateOperation implements Operation {
     final String name = 'Migrate'
 
-
     DatabaseConfig dbConfig
     FileStore fileStore
 
@@ -47,5 +46,3 @@ class MigrateOperation implements Operation {
         return dbConfig.isValidDatabaseConfig()
     }
 }
-
-

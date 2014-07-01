@@ -8,8 +8,8 @@ import org.junit.rules.TemporaryFolder
  * Created by jgelais on 5/30/2014.
  */
 class FileSystemFileStoreTest {
-    public static final String SAMPLE_TEXT = 'some text'
-    public static final String ALTERNATE_SAMPLE_TEXT = 'some other text'
+    private static final String SAMPLE_TEXT = 'some text'
+    private static final String ALTERNATE_SAMPLE_TEXT = 'some other text'
 
     @Rule
     @SuppressWarnings('PublicInstanceField')

@@ -1,15 +1,14 @@
 package com.commercehub.dbratchet.schema
 
 import com.commercehub.dbratchet.filestore.ClasspathFileStore
-import com.commercehub.dbratchet.filestore.FileStore
 
 /**
  * Created by jgelais on 5/19/2014.
  */
 class SchemaConfigTest extends GroovyTestCase {
-    public static final String CLASS_PATH_ROOT = '/com/commercehub/dbratchet/sampleschema/'
+    private static final String CLASS_PATH_ROOT = '/com/commercehub/dbratchet/sampleschema/'
 
-    SchemaConfig schemaConfig
+    private SchemaConfig schemaConfig
 
     @Override
     void setUp() {

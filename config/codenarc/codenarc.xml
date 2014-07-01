@@ -13,15 +13,20 @@
 	
 	<ruleset-ref path='rulesets/convention.xml'/>
 	
-	<ruleset-ref path='rulesets/design.xml'/>
+	<ruleset-ref path='rulesets/design.xml'>
+        <!-- Currently broken in CodeNarc-->
+        <exclude name='ToStringReturnsNull'/>
+    </ruleset-ref>
 	
 	<ruleset-ref path='rulesets/dry.xml'/>
 	
 	<ruleset-ref path='rulesets/exceptions.xml'/>
 	
-	<ruleset-ref path='rulesets/formatting.xml'/>
-	
-	<ruleset-ref path='rulesets/generic.xml'/>
+	<ruleset-ref path='rulesets/formatting.xml'>
+        <exclude name='SpaceAroundMapEntryColon'/>
+    </ruleset-ref>
+
+    <ruleset-ref path='rulesets/generic.xml'/>
 	
 	<ruleset-ref path='rulesets/groovyism.xml'/>
 	

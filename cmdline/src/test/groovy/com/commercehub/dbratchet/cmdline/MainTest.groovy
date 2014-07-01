@@ -98,5 +98,4 @@ class MainTest extends GroovyTestCase {
         }
     }
 
-
 }

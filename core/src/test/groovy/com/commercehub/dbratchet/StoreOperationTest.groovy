@@ -12,7 +12,7 @@ import org.junit.rules.TemporaryFolder
  * Created by jaystgelais on 5/22/14.
  */
 class StoreOperationTest {
-    public static final String ALIAS = 'alias'
+    private static final String ALIAS = 'alias'
 
     @Rule
     @SuppressWarnings('PublicInstanceField')

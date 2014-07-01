@@ -33,7 +33,7 @@ class MSSQLDataMigrator implements DataMigrator {
         List<String> mergeStatements = getMergeStatementsForDataPackage(dataPackage, tableToTempTableMap, sql)
         Date startTime = new Date()
         sql.withTransaction {
-            mergeStatements.each { mergeSql->
+            mergeStatements.each { mergeSql ->
                 sql.execute(mergeSql)
             }
         }
@@ -45,7 +45,7 @@ class MSSQLDataMigrator implements DataMigrator {
     private List<String> getMergeStatementsForDataPackage(DataPackage dataPackage,
                                                           Map<String, String> tableToTempTableMap, Sql sql) {
         List<String> returnList = [] as Queue<String>
-        dataPackage.tables.each { table->
+        dataPackage.tables.each { table ->
             returnList.add(getMergeSqlForTable(table, tableToTempTableMap, sql))
         }
 
@@ -72,7 +72,7 @@ class MSSQLDataMigrator implements DataMigrator {
     private String getMatchSql(List<String> pkColumns) {
         boolean isFirst = true
         String returnStr = ''
-        pkColumns.each { column->
+        pkColumns.each { column ->
             if (isFirst) {
                 returnStr += "target.${column} = source.${column}"
                 isFirst = false
@@ -87,7 +87,7 @@ class MSSQLDataMigrator implements DataMigrator {
     private String printColumnUpdates(List<String> dataColumns) {
         boolean isFirst = true
         String returnStr = ''
-        dataColumns.each  { column->
+        dataColumns.each  { column ->
             if (isFirst) {
                 returnStr += "target.${column} = source.${column}"
                 isFirst = false
@@ -102,7 +102,7 @@ class MSSQLDataMigrator implements DataMigrator {
     private String printColumnList(List<String> pkColumns, List<String> dataColumns, String prepend) {
         boolean isFirst = true
         String returnStr = ''
-        pkColumns.each { column->
+        pkColumns.each { column ->
             if (isFirst) {
                 returnStr += "${prepend}${column}"
                 isFirst = false
@@ -111,7 +111,7 @@ class MSSQLDataMigrator implements DataMigrator {
             }
         }
 
-        dataColumns.each { column->
+        dataColumns.each { column ->
             if (isFirst) {
                 returnStr += "${prepend}${column}"
                 isFirst = false
@@ -125,11 +125,11 @@ class MSSQLDataMigrator implements DataMigrator {
 
     private void loadTempTables(DataPackage dataPackage, Map<String, String> tableToTempTableMap, Sql sql) {
         def dataset = new XmlSlurper().parse(dataPackage.dataInputStream)
-        dataPackage.tables.each { table->
+        dataPackage.tables.each { table ->
             if (dataset."${table}".size() > 0) {
                 def sampleRow = dataset."${table}"[(0)]
-                sql.withBatch(1000, getParameterizedInsertToTempTable(tableToTempTableMap, sampleRow)) { stmt->
-                    dataset."${table}".each { row->
+                sql.withBatch(1000, getParameterizedInsertToTempTable(tableToTempTableMap, sampleRow)) { stmt ->
+                    dataset."${table}".each { row ->
                         stmt.addBatch(row.attributes())
                     }
                 }
@@ -143,7 +143,7 @@ class MSSQLDataMigrator implements DataMigrator {
         List<String> columns = getColumnListFromRow(row)
         String sqlStr = "insert into ${tableToTempTableMap.get(realTableName)} ("
         boolean isFirstCol = true
-        columns.each { col->
+        columns.each { col ->
             if (!isFirstCol) {
                 sqlStr += ', '
             }
@@ -152,7 +152,7 @@ class MSSQLDataMigrator implements DataMigrator {
         }
         sqlStr += ') values ('
         isFirstCol = true
-        columns.each { col->
+        columns.each { col ->
             if (!isFirstCol) {
                 sqlStr += ', '
             }
@@ -166,7 +166,7 @@ class MSSQLDataMigrator implements DataMigrator {
 
     private List<String> getColumnListFromRow(row) {
         List<String> list = [] as Queue<String>
-        row.attributes().keySet().each { attr->
+        row.attributes().keySet().each { attr ->
             list.add(attr)
         }
 
@@ -181,7 +181,7 @@ class MSSQLDataMigrator implements DataMigrator {
 
     private Map<String, String> getTableToTempTableMap(DataPackage dataPackage) {
         Map<String, String> tableToTempTableMap = [:]
-        dataPackage.tables.each { table->
+        dataPackage.tables.each { table ->
             tableToTempTableMap.put(table, getTempTableName(table))
         }
 
@@ -229,7 +229,7 @@ class MSSQLDataMigrator implements DataMigrator {
     private List<String> getDataColumnsForTable(Sql sql, String tableName, List<String> pkColumns) {
         List<String> dataColumns = [] as Queue<String>
         sql.eachRow('select name from sys.columns where object_id = OBJECT_ID(?) order by column_id asc',
-                [tableName]) { row->
+                [tableName]) { row ->
             if (!pkColumns.contains(row.name)) {
                 dataColumns.add(row.name)
             }

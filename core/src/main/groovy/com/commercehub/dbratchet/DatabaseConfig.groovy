@@ -71,15 +71,7 @@ class DatabaseConfig implements Cloneable {
     }
 
     boolean isValidServerConfig() {
-        if (!server) {
-            return false
-        }
-
-        if (user && !password) {
-            return false
-        }
-
-        return true
+       return server && (!user || (user && password))
     }
 
     boolean isValidDatabaseConfig() {
@@ -93,6 +85,8 @@ class DatabaseConfig implements Cloneable {
 
     @Override
     @SuppressWarnings('IfStatementBraces')
+    @SuppressWarnings('IfStatementCouldBeTernary')
+    @SuppressWarnings('UnnecessaryIfStatement')
     boolean equals(o) {
         if (this.is(o)) return true
         if (getClass() != o.class) return false

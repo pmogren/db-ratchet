@@ -21,5 +21,4 @@ class MockSqlCompare extends SqlCompare {
         return true
     }
 
-
 }
