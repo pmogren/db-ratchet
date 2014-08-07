@@ -3,4 +3,4 @@ env:
   global:
   - TERM=dumb
 install: true
-script: ./gradlew build
+script: ./gradlew build --debug
