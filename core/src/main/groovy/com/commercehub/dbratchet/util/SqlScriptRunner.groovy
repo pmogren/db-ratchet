@@ -4,6 +4,8 @@ import com.commercehub.dbratchet.DatabaseConfig
 import com.commercehub.dbratchet.databases.DatabaseClientFactory
 import groovy.sql.Sql
 
+import java.sql.SQLException
+
 /**
  * Created with IntelliJ IDEA.
  * User: jgelais
@@ -39,12 +41,18 @@ class SqlScriptRunner {
 
     static boolean runScript(DatabaseConfig dbConfig, InputStream scriptContents) {
         Sql sql = getSql(dbConfig)
+        String failedSqlStatement = null
         try {
             parseScriptIntoTransactions(scriptContents).each { sqlString ->
-                sql.execute(sqlString)
+                try {
+                    sql.execute(sqlString)
+                } catch (SQLException e) {
+                    failedSqlStatement = sqlString
+                    throw e
+                }
             }
         } catch (Exception e) {
-            System.err.println 'Error running SQL Script'
+            System.err.println 'Error running SQL Script' + (failedSqlStatement) ? ": $failedSqlStatement" : ''
             System.err.println 'Because SQL scripts can manage their own transactions,' +
                     ' this script may have been partially applied.'
             e.printStackTrace()
