@@ -190,7 +190,7 @@ class OperationManager {
                     'Database server password to use. Leave blank to use Active Directory authentication.')
             v(longOpt: 'version',    args:1, argName:'version',  required:false,
                     'Schema version to use in creating this database.')
-            f(longOpt: 'forceInit',                              required:false,
+            f(longOpt: 'force-init',                              required:false,
                     'Overrides the safety check that prevents initializing schema versioning of a non-empty database.')
             h(longOpt: 'help',                                   required:false,
                     'Displays this usage message.')
