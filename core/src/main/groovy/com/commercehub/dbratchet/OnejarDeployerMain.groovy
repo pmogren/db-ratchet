@@ -12,6 +12,7 @@ class OnejarDeployerMain {
     Version version
     boolean isSchemaOnly = false
     boolean isDataOnly = false
+    boolean forceInit = false
 
     private OnejarDeployerMain(DatabaseConfig dbConfig, Version version) {
         this.dbConfig = dbConfig
@@ -47,6 +48,7 @@ class OnejarDeployerMain {
     void doBuildOperation() {
         Operation buildOp = new BuildOperation(dbConfig, version,
                                                new SchemaConfig(new ClasspathFileStore()))
+        buildOp.setInitNonEmptyDbForced(forceInit)
         buildOp.run()
     }
 
@@ -82,6 +84,10 @@ class OnejarDeployerMain {
         Version version = null
         if (options.v) {
             version = new Version(options.v)
+        }
+
+        if (options.f) {
+            forceInit = true
         }
 
         def main = new com.commercehub.dbratchet.OnejarDeployerMain(getDBConfigFromCmdLineOptions(options), version)
