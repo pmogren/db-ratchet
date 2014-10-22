@@ -58,6 +58,11 @@ class BuildOperationTest extends GroovyTestCase {
         DatabaseClientFactory.getDatabaseClient(databaseConfig.vendor).getSql(databaseConfig)
                 .execute('drop table "dbo"."schema_version"')
         assert !buildOp.run()
+
+        BuildOperation buildOp2 = new BuildOperation(databaseConfig, new Version(0,1,0),
+                new SchemaConfig(new ClasspathFileStore('/com/commercehub/dbratchet/sampleschema2/')))
+        buildOp2.setInitNonEmptyDbForced(true)
+        assert buildOp2.run()
     }
 
     private DatabaseConfig getDatabaseConfig(String database) {

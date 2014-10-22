@@ -167,6 +167,12 @@ class OperationManagerTest extends GroovyTestCase {
         assert manager.getBuildOperation.call(['-a', 'alias', '-d', 'database']) instanceof BuildOperation
     }
 
+    void testBuildOperationCreationWithForcedInt() {
+        def op = manager.getBuildOperation.call(['-a', 'alias', '-d', 'database', '-f'])
+        assert op instanceof BuildOperation
+        assert op.initNonEmptyDbForced
+    }
+
     void testBuildOperationCreationEmptyArgs() {
         shouldFail(InvalidOptionsException) {
             manager.getBuildOperation.call(emptyArgs)

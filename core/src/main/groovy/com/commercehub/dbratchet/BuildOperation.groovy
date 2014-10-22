@@ -19,6 +19,7 @@ class BuildOperation implements Operation {
     DatabaseConfig dbConfig
     Version version
     SchemaConfig schemaConfig
+    boolean initNonEmptyDbForced
 
     BuildOperation(DatabaseConfig dbConfig, Version version, SchemaConfig schemaConfig) {
         this.dbConfig = dbConfig
@@ -55,7 +56,7 @@ class BuildOperation implements Operation {
     }
 
     private boolean isSafeToMigrate() {
-        return isDbSchemaEmpty() || isSchemaVersionTableInDatabase()
+        return isDbSchemaEmpty() || isSchemaVersionTableInDatabase() || isInitNonEmptyDbForced()
     }
 
     private boolean isDbSchemaEmpty() {

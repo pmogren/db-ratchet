@@ -190,6 +190,8 @@ class OperationManager {
                     'Database server password to use. Leave blank to use Active Directory authentication.')
             v(longOpt: 'version',    args:1, argName:'version',  required:false,
                     'Schema version to use in creating this database.')
+            f(longOpt: 'forceInit',                              required:false,
+                    'Overrides the safety check that prevents initializing schema versioning of a non-empty database.')
             h(longOpt: 'help',                                   required:false,
                     'Displays this usage message.')
         }
@@ -289,8 +291,14 @@ class OperationManager {
             version = new Version(options.v)
         }
 
-        return new BuildOperation(getDBConfigFromCmdLineOptions(options), version,
+        BuildOperation returnOp = new BuildOperation(getDBConfigFromCmdLineOptions(options), version,
                 new SchemaConfig(new FileSystemFileStore()))
+
+        if (options.f) {
+            returnOp.setInitNonEmptyDbForced(true)
+        }
+
+        return returnOp
     }
 
     private final processCaptureCli = { def options ->
@@ -312,7 +320,7 @@ class OperationManager {
             ServerCredentialStore credStore = new ServerCredentialStore(schemaConfig)
             dbConfig = credStore.get(options.a)
         }
-        
+
         dbConfig = dbConfig ?: new DatabaseConfig(server: (options.s ?: null), user: (options.u ?: null),
                 password: (options.p ?: null))
 
