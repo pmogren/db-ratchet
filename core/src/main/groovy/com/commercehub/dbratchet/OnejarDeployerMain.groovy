@@ -86,10 +86,6 @@ class OnejarDeployerMain {
             version = new Version(options.v)
         }
 
-        if (options.f) {
-            forceInit = true
-        }
-
         def main = new com.commercehub.dbratchet.OnejarDeployerMain(getDBConfigFromCmdLineOptions(options), version)
 
         if (options.'schema-only') {
@@ -101,6 +97,10 @@ class OnejarDeployerMain {
         if (main.isSchemaOnly && main.isDataOnly) {
             System.err.println('Cannot specify both --schema-only and --data-only')
             throw new IllegalArgumentException()
+        }
+
+        if (options.f) {
+            main.forceInit = true
         }
 
         return main
